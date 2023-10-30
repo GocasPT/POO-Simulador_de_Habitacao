@@ -1,0 +1,14 @@
+//
+// Created by Guilherme Camacho on 29/10/2023.
+//
+
+#ifndef POO_SIMULADOR_HABITACAO_PROCESSADOR_H
+#define POO_SIMULADOR_HABITACAO_PROCESSADOR_H
+
+
+class Processador {
+
+};
+
+
+#endif //POO_SIMULADOR_HABITACAO_PROCESSADOR_H

@@ -1,10 +1,10 @@
-//#include <iostream>
 #include "Class/Simulador/Simulador.h"
 
 int main() {
     Simulador simulador;
 
-    //std::cout << "Hello, World!" << std::endl;
+    // PLACEHOLDER
+    simulador.start();
 
     return 0;
 }

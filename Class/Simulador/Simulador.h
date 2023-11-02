@@ -1,6 +1,7 @@
 #ifndef SIMULADOR_H
 #define SIMULADOR_H
 
+#include "../../Lib/Terminal.h"
 
 class Simulador {
 public:

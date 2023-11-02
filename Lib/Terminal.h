@@ -37,6 +37,8 @@ namespace term {
                 case TerminalFormatter::Type::COLOR:
                     color = a;
                     break;
+                case Type::NOCOLOR:
+                    break;
             }
         }
     private:

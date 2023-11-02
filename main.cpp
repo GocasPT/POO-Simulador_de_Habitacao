@@ -2,9 +2,7 @@
 
 int main() {
     Simulador simulador;
-
-    // PLACEHOLDER
-    simulador.start();
+    simulador.menu();
 
     return 0;
 }

@@ -3,116 +3,120 @@
 #include <string>
 #include <vector>
 
+#define VIEW_WIDTH 80
+#define VIEW_HEIGHT 25
+#define CONSOLE_HEIGHT 3
+#define INFO_WIDTH 35
+
 using std::endl;
 
-Simulador::Simulador(): term(term::Terminal::instance()) {
-    winView = new term::Window(1, 1, 10, 10);
-    winConsole = new term::Window(12, 1, 10, 3);
-    winInfo = new term::Window(1, 13, 5, 5);
-    winMenu = nullptr;
+Simulador::Simulador() : term(term::Terminal::instance()) {
+    winMenu = new term::Window(1, 1, term.getNumCols(), term.getNumRows());
+    winView = nullptr;
+    winConsole = nullptr;
+    winInfo = nullptr;
 
     inSimulation = false;
 }
 
-void Simulador::init() {
+void Simulador::menu() {
+    std::ostringstream os;
+    std::string input;
+    int opt;
 
+    //TODO [depois]: embelezar isto tudo
+    os << "   _____  _                    _             _              " << endl;
+    os << "  / ____|(_)                  | |           | |             " << endl;
+    os << " | (___   _  _ __ ___   _   _ | |  __ _   __| |  ___   _ __ " << endl;
+    os << R"(  \___ \ | || '_ ` _ \ | | | || | / _` | / _` | / _ \ | '__|)" << endl;
+    os << "  ____) || || | | | | || |_| || || (_| || (_| || (_) || |   " << endl;
+    os << R"( |_____/ |_||_| |_| |_| \__,_||_| \__,_| \__,_| \___/ |_|   )" << endl;
+    os << "                                                            " << endl
+       << endl;
+
+    os << endl
+       << "\t1 - Comecar o simulador" << endl
+       << "\t2 - Sair do simulador" << endl
+       << endl
+       << "Escolha: ";
+
+    //TODO [depois]: centriliza menu
+    do {
+        winMenu->clear();
+        //*winMenu << move(term.getNumCols() / 2, term.getNumRows() / 2);
+        *winMenu << os.str();
+        *winMenu >> input;
+        std::stringstream(input) >> opt;
+
+        if(opt == 1) {
+            break;
+        } else if (opt == 2) {
+            return;
+        }
+    } while (true);
+
+    winMenu->clear();
+    init();
+}
+
+void Simulador::init() {
+    delete winMenu;
+    winView = new term::Window(1, 1, VIEW_WIDTH, VIEW_HEIGHT);
+    winConsole = new term::Window(1, VIEW_HEIGHT+1, VIEW_WIDTH, CONSOLE_HEIGHT);
+    winInfo = new term::Window(VIEW_WIDTH+1, 1, INFO_WIDTH, VIEW_HEIGHT + CONSOLE_HEIGHT);
+    start();
 }
 
 void Simulador::start() {
     inSimulation = true;
-
-    *winView << "Isto é a janela de visualização";
-
-    std::istringstream comando0("prox");
-    validateCommand(comando0);
-
-    std::istringstream comando1("avanca");
-    validateCommand(comando1);
-
-    std::istringstream comando2("hnova");
-    validateCommand(comando2);
-
-    std::istringstream comando3("hrem");
-    validateCommand(comando3);
-
-    std::istringstream comando4("znova");
-    validateCommand(comando4);
-
-    std::istringstream comando5("zrem");
-    validateCommand(comando5);
-
-    std::istringstream comando6("zlista");
-    validateCommand(comando6);
-
-    std::istringstream comando7("zcomp");
-    validateCommand(comando7);
-
-    std::istringstream comando8("zprops");
-    validateCommand(comando8);
-
-    std::istringstream comando9("pmod");
-    validateCommand(comando9);
-
-    std::istringstream comando10("cnovo");
-    validateCommand(comando10);
-
-    std::istringstream comando11("crem");
-    validateCommand(comando11);
-
-    std::istringstream comando12("rnova");
-    validateCommand(comando12);
-
-    std::istringstream comando13("pmuda");
-    validateCommand(comando13);
-
-    std::istringstream comando14("rlista");
-    validateCommand(comando14);
-
-    std::istringstream comando15("rrem");
-    validateCommand(comando15);
-
-    std::istringstream comando16("asoc");
-    validateCommand(comando16);
-
-    std::istringstream comando17("ades");
-    validateCommand(comando17);
-
-    std::istringstream comando18("acom");
-    validateCommand(comando18);
-
-    std::istringstream comando19("psalva");
-    validateCommand(comando19);
-
-    std::istringstream comando20("prepoe");
-    validateCommand(comando20);
-
-    std::istringstream comando21("prem");
-    validateCommand(comando21);
-
-    std::istringstream comando22("plista");
-    validateCommand(comando22);
-
-    std::istringstream comando24("exec");
-    validateCommand(comando24);
-
-    std::istringstream comando25("sair");
-    validateCommand(comando25);
-
-
-
-    term.getchar();
+    run();
 }
 
-void Simulador::stop() {
+void Simulador::stop() { inSimulation = false; }
 
+//TODO [depois]: scroll para o windInfo
+void Simulador::run() {
+    while (inSimulation) {
+        std::string command;
+        *winConsole >> command;
+
+        std::istringstream comando(command);
+        if (!validateCommand(comando)) {
+            writeInfo("Comando valido\n");
+        }
+
+        //PLACEHOLDER
+        update();
+        winConsole->clear();
+    }
 }
 
+//TODO: ler as zonas e desenhalhas na planta (aka view)
 void Simulador::update() {
-
+    draw(1, 1, 3, 2);
 }
 
-void Simulador::writeInfo() {
+//TODO: verificar se o draw funciona
+void Simulador::draw(int x, int y, int w, int h) {
+    *winView << move(x, y);
 
+    for (int i = 0; i < w; i++) {
+        for (int j = 0; j < h; j++)
+            *winView << '-';
+        *winView << move(x, y + i + 1);
+    }
+}
+
+void Simulador::writeInfo(std::string format, ...) {
+    winInfo->clear();
+
+    va_list args;
+    va_start(args, format);
+
+    //TODO [depois]: escrita do formato
+    *winInfo << format;
+
+    va_end(args);
 }
 
 bool Simulador::validateCommand(std::istringstream &comando) {
@@ -125,233 +129,186 @@ bool Simulador::validateCommand(std::istringstream &comando) {
     }
     argv.pop_back();
 
+    //TODO [feature]: help command
+    //TODO [depois]: comments para  separar a categoria dos comandos
     if (argv[0] == "prox") {
         if (argv.size() == 1) {
-            //*winInfo << "Comando 'prox'\n";
-            term << "Comando 'prox'\n";
+            //PLACEHOLDER
+            writeInfo("Comando 'prox' [%d %d]\n", 1, 2);
             return true;
         } else {
-            //*winInfo << "Comando 'prox' invalido: Nao tem argumentos\n";
-            term << "Comando 'prox' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'prox' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "avanca") {
+    } else if (argv[0] == "avanca") {
         if (argv.size() == 2) {
-            //*winInfo << "Comando 'avanca'\n";
-            term << "Comando 'avanca'\n";
+            writeInfo("Comando 'avanca'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'avanca' invalido: Nao tem argumentos\n";
-            term << "Comando 'avanca' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'avanca' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "hnova") {
+    } else if (argv[0] == "hnova") {
         if (argv.size() == 3) {
-            //*winInfo << "Comando 'hnova'\n";
-            term << "Comando 'hnova'\n";
+            writeInfo("Comando 'hnova'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'hnova' invalido: Nao tem argumentos\n";
-            term << "Comando 'hnova' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'hnova' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "hrem") {
+    } else if (argv[0] == "hrem") {
         if (argv.size() == 1) {
-            //*winInfo << "Comando 'hrem'\n";
-            term << "Comando 'hrem'\n";
+            writeInfo("Comando 'hrem'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'hrem' invalido: Nao tem argumentos\n";
-            term << "Comando 'hrem' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'hrem' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "znova") {
+    } else if (argv[0] == "znova") {
         if (argv.size() == 3) {
-            //*winInfo << "Comando 'znova'\n";
-            term << "Comando 'znova'\n";
+            writeInfo("Comando 'znova'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'znova' invalido: Nao tem argumentos\n";
-            term << "Comando 'znova' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'znova' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "zrem") {
+    } else if (argv[0] == "zrem") {
         if (argv.size() == 2) {
-            //*winInfo << "Comando 'zrem'\n";
-            term << "Comando 'zrem'\n";
+            writeInfo("Comando 'zrem'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'zrem' invalido: Nao tem argumentos\n";
-            term << "Comando 'zrem' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'zrem' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "zlista") {
+    } else if (argv[0] == "zlista") {
         if (argv.size() == 1) {
-            //*winInfo << "Comando 'zlista'\n";
-            term << "Comando 'zlista'\n";
+            writeInfo("Comando 'zlista'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'zlista' invalido: Nao tem argumentos\n";
-            term << "Comando 'zlista' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'zlista' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "zcomp") {
+    } else if (argv[0] == "zcomp") {
         if (argv.size() == 2) {
-            //*winInfo << "Comando 'zcomp'\n";
-            term << "Comando 'zcomp'\n";
+            writeInfo("Comando 'zcomp'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'zcomp' invalido: Nao tem argumentos\n";
-            term << "Comando 'zcomp' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'zcomp' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "zprops") {
+    } else if (argv[0] == "zprops") {
         if (argv.size() == 2) {
-            //*winInfo << "Comando 'zprops'\n";
-            term << "Comando 'zprops'\n";
+            writeInfo("Comando 'zprops'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'zprops' invalido: Nao tem argumentos\n";
-            term << "Comando 'zprops' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'zprops' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "pmod") {
+    } else if (argv[0] == "pmod") {
         if (argv.size() == 3) {
-            //*winInfo << "Comando 'pmod'\n";
-            term << "Comando 'pmod'\n";
+            writeInfo("Comando 'pmod'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'pmod' invalido: Nao tem argumentos\n";
-            term << "Comando 'pmod' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'pmod' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "cnovo") {
+    } else if (argv[0] == "cnovo") {
         if (argv.size() == 4) {
-            //*winInfo << "Comando 'cnovo'\n";
-            term << "Comando 'cnovo'\n";
+            writeInfo("Comando 'cnovo'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'cnovo' invalido: Nao tem argumentos"\n;
-            term << "Comando 'cnovo' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'cnovo' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "crem") {
+    } else if (argv[0] == "crem") {
         if (argv.size() == 4) {
-            //*winInfo << "Comando 'crem'\n";
-            term << "Comando 'crem'\n";
+            writeInfo("Comando 'crem'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'crem' invalido: Nao tem argumentos\n";
-            term << "Comando 'crem' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'crem' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "rnova") {
+    } else if (argv[0] == "rnova") {
         if (argv.size() == 5) {
-            //*winInfo << "Comando 'rnova'\n";
-            term << "Comando 'rnova'\n";
+            writeInfo("Comando 'rnova'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'rnova' invalido: Nao tem argumentos\n";
-            term << "Comando 'rnova' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'rnova' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "pmuda") {
+    } else if (argv[0] == "pmuda") {
         if (argv.size() == 4) {
-            //*winInfo << "Comando 'pmuda'\n";
-            term << "Comando 'pmuda'\n";
+            writeInfo("Comando 'pmuda'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'pmuda' invalido: Nao tem argumentos\n";
-            term << "Comando 'pmuda' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'pmuda' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "rlista") {
+    } else if (argv[0] == "rlista") {
         if (argv.size() == 3) {
-            //*winInfo << "Comando 'rlista'\n";
-            term << "Comando 'rlista'\n";
+            writeInfo("Comando 'rlista'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'rlista' invalido: Nao tem argumentos\n";
-            term << "Comando 'rlista' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'rlista' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "rrem") {
+    } else if (argv[0] == "rrem") {
         if (argv.size() == 4) {
-            //*winInfo << "Comando 'rrem'\n";
-            term << "Comando 'rrem'\n";
+            writeInfo("Comando 'rrem'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'rrem' invalido: Nao tem argumentos\n";
-            term << "Comando 'rrem' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'rrem' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "asoc") {
+    } else if (argv[0] == "asoc") {
         if (argv.size() == 4) {
-            //*winInfo << "Comando 'asoc'\n";
-            term << "Comando 'asoc'\n";
+            writeInfo("Comando 'asoc'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'asoc' invalido: Nao tem argumentos"\n;
-            term << "Comando 'asoc' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'asoc' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "ades") {
+    } else if (argv[0] == "ades") {
         if (argv.size() == 4) {
-            //*winInfo << "Comando 'ades'\n";
-            term << "Comando 'ades'\n";
+            writeInfo("Comando 'ades'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'ades' invalido: Nao tem argumentos\n";
-            term << "Comando 'ades' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'ades' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "acom") {
+    } else if (argv[0] == "acom") {
         if (argv.size() == 4) {
-            //*winInfo << "Comando 'acom'\n";
-            term << "Comando 'acom'\n";
+            writeInfo("Comando 'acom'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'acom' invalido: Nao tem argumentos\n";
-            term << "Comando 'acom' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'acom' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "psalva") {
+    } else if (argv[0] == "psalva") {
         if (argv.size() == 4) {
-            //*winInfo << "Comando 'psalva'\n";
-            term << "Comando 'psalva'\n";
+            writeInfo("Comando 'psalva'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'psalva' invalido: Nao tem argumentos\n";
-            term << "Comando 'psalva' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'psalva' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "prepoe") {
+    } else if (argv[0] == "prepoe") {
         if (argv.size() == 2) {
-            //*winInfo << "Comando 'prepoe'\n";
-            term << "Comando 'prepoe'\n";
+            writeInfo("Comando 'prepoe'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'prepoe' invalido: Nao tem argumentos\n";
-            term << "Comando 'prepoe' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'prepoe' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "prem") {
+    } else if (argv[0] == "prem") {
         if (argv.size() == 2) {
-            //*winInfo << "Comando 'prem'\n";
-            term << "Comando 'prem'\n";
+            writeInfo("Comando 'prem'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'prem' invalido: Nao tem argumentos\n";
-            term << "Comando 'prem' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'prem' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "plista") {
+    } else if (argv[0] == "plista") {
         if (argv.size() == 1) {
-            //*winInfo << "Comando 'plista'\n";
-            term << "Comando 'plista'\n";
+            writeInfo("Comando 'plista'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'plista' invalido: Nao tem argumentos\n";
-            term << "Comando 'plista' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'plista' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "exec") {
+    } else if (argv[0] == "exec") {
         if (argv.size() == 2) {
-            //*winInfo << "Comando 'exec'\n";
-            term << "Comando 'exce'\n";
+            writeInfo("Comando 'exec'\n");
             return true;
         } else {
-            //*winInfo << "Comando 'exec' invalido: Nao tem argumentos\n";
-            term << "Comando 'exec' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'exec' invalido: Nao tem argumentos\n");
         }
-    }else  if (argv[0] == "sair") {
+    } else if (argv[0] == "sair") {
         if (argv.size() == 1) {
-            //*winInfo << "Comando 'sair'\n";
-            term << "Comando 'sair'\n";
+            writeInfo("Comando 'sair'\n");
+            stop();
             return true;
         } else {
-            //*winInfo << "Comando 'sair' invalido: Nao tem argumentos\n";
-            term << "Comando 'sair' invalido: Nao tem argumentos\n";
+            writeInfo("Comando 'prox' invalido: Nao tem argumentos");
         }
-    }else
-        term<< "Comando invalido!!\n";
+    }
 
     return false;
 }
@@ -360,5 +317,4 @@ Simulador::~Simulador() {
     delete winView;
     delete winConsole;
     delete winInfo;
-    delete winMenu;
 }

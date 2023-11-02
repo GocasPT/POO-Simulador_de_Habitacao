@@ -4,30 +4,36 @@
 #include <sstream>
 
 #include "../../Lib/Terminal.h"
+//#include "../Habitacao/Habitacao.h"
 
 class Simulador {
     // Variaveis da UI
     term::Terminal &term;
-    term::Window *winView, *winConsole, *winInfo;
-    //TODO: verificar se é fixe fazer a janela de menu;
-    term::Window *winMenu;
+    term::Window *winMenu, *winView, *winConsole, *winInfo; //TODO [?]: fazer mais windows
 
     // Variaveis do Simulador
     bool inSimulation;
+    //Habitacao habitacao;
+
+    // Metodos
+    void init();
+    void start();
+    void stop();
+    void run();
+    void update();
+    void draw(int x, int y, int w, int h);
+    //void draw(Zona& zona);
+    void writeInfo(std::string format, ...);
+    bool validateCommand(std::istringstream &command);
 
 public:
     // Construtor
     Simulador();
 
     // Metodos
-    void init();
-    void start();
-    void stop();
-    void update();
-    void writeInfo();
-    bool validateCommand(std::istringstream &command);
+    void menu();
 
-    // Deconstrutor
+    // Desconsstrjtoe
     ~Simulador();
 };
 

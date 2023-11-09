@@ -2,8 +2,18 @@
 #define HABITACAO_H
 
 
-class Habitacao {
+#include "Zona/Zona.h"
 
+class Habitacao {
+private:
+    int numColunas;
+    int numLinhas;
+    Zona*** listaZonas; // Matriz de ponteiros com tamanho fixo
+
+public:
+    Habitacao(int numColunas, int numLinhas);
+
+    ~Habitacao();
 };
 
 

@@ -90,7 +90,7 @@ void Simulador::run() {
 
         std::istringstream cmd(cmdInput);
         if (!validateCommand(cmd)) {
-            *winInfo << "Comando valido\n";
+            *winInfo << "Comando invalido!\n";
         }
 
         //PLACEHOLDER

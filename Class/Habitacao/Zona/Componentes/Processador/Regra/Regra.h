@@ -6,8 +6,15 @@
 #define POO_SIMULADOR_HABITACAO_REGRA_H
 
 
-class Regra {
+#include "../../Sensor/Sensor.h"
+#include "../../../Propriedade/Propriedade.h"
 
+class Regra {
+private:
+    Sensor* sensor;
+    std::vector<Propriedade*> propriedades;
+
+public:
 };
 
 

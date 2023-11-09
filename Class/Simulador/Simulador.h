@@ -7,33 +7,26 @@
 //#include "../Habitacao/Habitacao.h"
 
 class Simulador {
-    // Variaveis da UI
-    term::Terminal &term;
-    term::Window *winMenu, *winView, *winConsole, *winInfo; //TODO [?]: fazer mais windows
+    term::Terminal &term;   // Referencia para o terminal
+    term::Window *winMenu, *winView, *winConsole, *winInfo; // Janelas //TODO [?]: fazer mais windows
 
-    // Variaveis do Simulador
-    bool inSimulation;
+    bool inSimulation;  // Flag que indica se o simulador esta a correr
     //Habitacao habitacao;
 
-    // Metodos
-    void init();
-    void start();
-    void stop();
-    void run();
-    void update();
-    void draw(int x, int y, int w, int h);
-    //void draw(Zona& zona);
-    void writeInfo(std::string format, ...);
-    bool validateCommand(std::istringstream &command);
+    void init();    // Inicializa o simulador
+    void start();   // Inicia o simulador
+    void stop();    // Para o simulador
+    void run(); // Corre o simulador
+    void updateView();  // Atualiza a view do simulador
+    void draw(int x, int y, int w, int h); // Desenha na view
+    //void draw(Zona& zona); // Desenha uma zona na view
+    bool validateCommand(std::istringstream &command);  // Valida um comando
 
 public:
-    // Construtor
     Simulador();
 
-    // Metodos
-    void menu();
+    void menu(); // Mostra o menu
 
-    // Desconsstrjtoe
     ~Simulador();
 };
 

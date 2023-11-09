@@ -75,6 +75,9 @@ namespace term {
         int getchar();
         void clear();
 
+        void scrollok(bool flag=true);
+        void curs_set(int visibility);
+
     private:
         int last_color_pair=-1;
         WINDOW *window=NULL;

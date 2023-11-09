@@ -1,5 +1,5 @@
-#ifndef POO_SIMULADOR_HABITACAO_HABITACAO_H
-#define POO_SIMULADOR_HABITACAO_HABITACAO_H
+#ifndef HABITACAO_H
+#define HABITACAO_H
 
 
 class Habitacao {
@@ -7,4 +7,4 @@ class Habitacao {
 };
 
 
-#endif //POO_SIMULADOR_HABITACAO_HABITACAO_H
+#endif //HABITACAO_H

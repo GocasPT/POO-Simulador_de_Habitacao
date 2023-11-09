@@ -160,7 +160,13 @@ namespace term {
         ::wrefresh(window);
     }
 
+    void Window::scrollok(bool flag) {
+        ::scrollok(this->window, flag);
+    }
 
+    void Window::curs_set(int visibility) {
+        ::curs_set(visibility);
+    }
 
     Terminal::Terminal() {
         ::initscr();

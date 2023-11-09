@@ -13,22 +13,24 @@ add_executable(${PROJECT_NAME} main.cpp
         Class/Habitacao/Habitacao.h
         Class/Habitacao/Zona/Zona.cpp
         Class/Habitacao/Zona/Zona.h
-        Class/Habitacao/Zona/Aparelho/Aparelho.cpp
-        Class/Habitacao/Zona/Aparelho/Aparelho.h
-        Class/Habitacao/Zona/Aparelho/Aquecedor/Aquecedor.cpp
-        Class/Habitacao/Zona/Aparelho/Aquecedor/Aquecedor.h
-        Class/Habitacao/Zona/Aparelho/Aspersor/Aspersor.cpp
-        Class/Habitacao/Zona/Aparelho/Aspersor/Aspersor.h
-        Class/Habitacao/Zona/Aparelho/Lampada/Lampada.cpp
-        Class/Habitacao/Zona/Aparelho/Lampada/Lampada.h
-        Class/Habitacao/Zona/Aparelho/Refrigerador/Refrigerador.cpp
-        Class/Habitacao/Zona/Aparelho/Refrigerador/Refrigerador.h
-        Class/Habitacao/Zona/Ambiente/Ambiente.cpp
-        Class/Habitacao/Zona/Ambiente/Ambiente.h
-        Class/Habitacao/Zona/Sensor/Sensor.cpp
-        Class/Habitacao/Zona/Sensor/Sensor.h
-        Class/Habitacao/Zona/Processador/Processador.cpp
-        Class/Habitacao/Zona/Processador/Processador.h)
+        Class/Habitacao/Zona/Componentes/Aparelho/Aparelho.cpp
+        Class/Habitacao/Zona/Componentes/Aparelho/Aparelho.h
+        Class/Habitacao/Zona/Componentes/Aparelho/Aquecedor/Aquecedor.cpp
+        Class/Habitacao/Zona/Componentes/Aparelho/Aquecedor/Aquecedor.h
+        Class/Habitacao/Zona/Componentes/Aparelho/Aspersor/Aspersor.cpp
+        Class/Habitacao/Zona/Componentes/Aparelho/Aspersor/Aspersor.h
+        Class/Habitacao/Zona/Componentes/Aparelho/Lampada/Lampada.cpp
+        Class/Habitacao/Zona/Componentes/Aparelho/Lampada/Lampada.h
+        Class/Habitacao/Zona/Componentes/Aparelho/Refrigerador/Refrigerador.cpp
+        Class/Habitacao/Zona/Componentes/Aparelho/Refrigerador/Refrigerador.h
+        Class/Habitacao/Zona/Propriedade/Propriedade.cpp
+        Class/Habitacao/Zona/Propriedade/Propriedade.h
+        Class/Habitacao/Zona/Componentes/Sensor/Sensor.cpp
+        Class/Habitacao/Zona/Componentes/Sensor/Sensor.h
+        Class/Habitacao/Zona/Componentes/Processador/Processador.cpp
+        Class/Habitacao/Zona/Componentes/Processador/Processador.h
+        Class/Habitacao/Zona/Componentes/Processador/Regra/Regra.cpp
+        Class/Habitacao/Zona/Componentes/Processador/Regra/Regra.h)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_link_libraries(${PROJECT_NAME} C:/PDCurses-3.9/wincon/pdcurses.a)

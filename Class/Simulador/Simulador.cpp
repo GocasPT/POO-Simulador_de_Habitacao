@@ -4,21 +4,22 @@
 #include <vector>
 
 #define MENU_WIDTH 85
-#define MENU_HEIGHT 25
-#define VIEW_WIDTH 80
-#define VIEW_HEIGHT 25
+#define MENU_HEIGHT 20
+#define VIEW_WIDTH 180
+#define VIEW_HEIGHT 55
 #define CONSOLE_HEIGHT 3
-#define INFO_WIDTH 37
+#define INFO_WIDTH 50
 
 #define TAG_INPUT ">>"
 
 using std::endl;
 
 Simulador::Simulador() : term(term::Terminal::instance()) {
-    winMenu = new term::Window(25, 5, MENU_WIDTH, MENU_HEIGHT, false);
+    winMenu = new term::Window(term.getNumRows() + term.getNumRows()/2, 15, MENU_WIDTH, MENU_HEIGHT, false);
     winView = nullptr;
     winConsole = nullptr;
     winInfo = nullptr;
+    //winZones = nullptr;
 
     inSimulation = false;
 }
@@ -28,7 +29,6 @@ void Simulador::menu() {
     std::string input;
     int opt;
 
-    //TODO [depois]: embelezar isto tudo
     os << "   _____  _                    _             _              " << endl
        << "  / ____|(_)                  | |           | |             " << endl
        << " | (___   _  _ __ ___   _   _ | |  __ _   __| |  ___   _ __ " << endl
@@ -49,14 +49,31 @@ void Simulador::menu() {
         *winMenu >> input;
         std::stringstream(input) >> opt;
 
-        if (opt == 1) {
-            break;
-        } else if (opt == 2) {
-            return;
+        if (opt == 2) return;
+    } while (opt != 1);
+
+    int high = 0, wide = 0;
+    do {
+        winMenu->clear();
+        *winMenu << "Numero de linhas: ";
+        *winMenu >> input;
+        std::stringstream(input) >> high;
+        *winMenu << "Numero de colunas: ";
+        *winMenu >> input;
+        std::stringstream(input) >> wide;
+
+        if (high < 2 || high > 4 || wide < 2 || wide > 4) {
+            winMenu->clear();
+            *winMenu << "Dimensoes invalidas!\n"
+                     << "As dimensoes devem ser entre 2 e 4\n"
+                     << "[ENTER PARA CONTINUAR]";
+            winMenu->getchar();
         }
-    } while (true);
+
+    } while (high < 2 || high > 4 || wide < 2 || wide > 4);
 
     winMenu->clear();
+    term.clear();
     init();
 }
 
@@ -139,7 +156,6 @@ bool Simulador::validateCommand(std::istringstream &comando) {
 
     // Comando 'help'
     if (argv[0] == "help") {
-        winInfo->curs_set(0);
         if (argv.size() == 1) {
             *winInfo << "Comnado 'help'\n"
                      << "help [comando]\n"
@@ -150,54 +166,41 @@ bool Simulador::validateCommand(std::istringstream &comando) {
                     *winInfo << "Comandos para o tempo:\n"
                              << "prox\n"
                              << "avanca <n>\n"
-                             << "[ENTER PARA CONTINUAR]"
-                             << "\n";
-                    winInfo->getchar();
-                    *winInfo << "Comandos para as habitacoes:\n"
+                             << "\n"
+                             << "Comandos para as habitacoes:\n"
                              << "hnova <num linhas> <num colunas>\n"
                              << "hrem\n"
                              << "znova <linha> <coluna>\n"
                              << "zrem <ID zona>\n"
                              << "zlista\n"
-                             << "[ENTER PARA CONTINUAR]"
-                             << "\n";
-                    winInfo->getchar();
-                    *winInfo << "Comandos para as zonas:\n"
+                             << "\n"
+                             << "Comandos para as zonas:\n"
                              << "zcomp <ID zona>\n"
                              << "zprops <ID zona>\n"
                              << "pmod <ID zona> <nome> <valor>\n"
                              << "cnovo <ID zona> <s | p | a> <tipo | comando>\n"
                              << "crem <ID zona> <s | p | a> <ID>\n"
-                             << "[ENTER PARA CONTINUAR]"
-                             << "\n";
-                    winInfo->getchar();
-                    *winInfo << "Comandos para os precessadores:\n"
+                             << "\n"
+                             << "Comandos para os precessadores:\n"
                              << "rnova <ID zona> <ID proc. regras> <regra> <ID sensor> [param1] [param2] [...]\n"
                              << "pmuda <ID zona> <ID proc. regras> <novo comando>\n"
                              << "rlista <ID zona> <ID proc. regras>\n"
                              << "rrem <ID zona> <ID proc. regras> <ID regra>\n"
                              << "asoc <ID zona> <ID proc. regras> <ID aparelho>\n"
                              << "ades <ID zona> <ID proc. regras> <ID aparelho>\n"
-                             << "[ENTER PARA CONTINUAR]"
-                             << "\n";
-                    winInfo->getchar();
-                    *winInfo << "Comandos para os aparelhos:\n"
+                             << "\n"
+                             << "Comandos para os aparelhos:\n"
                              << "acom <ID zona> <ID aparelho> <comando>\n"
-                             << "[ENTER PARA CONTINUAR]"
-                             << "\n";
-                    winInfo->getchar();
-                    *winInfo << "Comandos para copiar/recuperar dos processadores:\n"
+                             << "\n"
+                             << "Comandos para copiar/recuperar dos processadores:\n"
                              << "psalva <ID zona> <ID proc. regras> <nome>\n"
                              << "prepoe <nome>\n"
                              << "prem <nome>\n"
                              << "plista\n"
-                             << "[ENTER PARA CONTINUAR]"
-                             << "\n";
-                    winInfo->getchar();
-                    *winInfo << "Comandos para o simulador:\n"
+                             << "\n"
+                             << "Comandos para o simulador:\n"
                              << "exec <nome de ficheiro>\n"
                              << "sair\n";
-                    winInfo->curs_set(1);
                     return true;
                 }
 
@@ -288,7 +291,6 @@ bool Simulador::validateCommand(std::istringstream &comando) {
     // Comandos para o tempo
     else if (argv[0] == "prox") {
         if (argv.size() == 1) {
-            //PLACEHOLDER
             *winInfo << "Comando 'prox'\n";
             return true;
         } else {
@@ -480,9 +482,15 @@ bool Simulador::validateCommand(std::istringstream &comando) {
     return false;
 }
 
+//TODO: Fazer a função de leitura de ficheiro de comando
+bool Simulador::readFile(std::string filename) {
+    return false;
+}
+
 Simulador::~Simulador() {
     delete winMenu;
     delete winView;
     delete winConsole;
     delete winInfo;
+    //delete winZones
 }

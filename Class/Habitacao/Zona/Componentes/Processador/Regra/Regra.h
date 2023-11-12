@@ -6,6 +6,7 @@
 #define POO_SIMULADOR_HABITACAO_REGRA_H
 
 
+#include <vector>
 #include "../../Sensor/Sensor.h"
 #include "../../../Propriedade/Propriedade.h"
 

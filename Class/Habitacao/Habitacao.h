@@ -6,12 +6,11 @@
 
 class Habitacao {
 private:
-    int numColunas;
-    int numLinhas;
-    Zona*** listaZonas; // Matriz de ponteiros com tamanho fixo
+    int wide, high;
+    Zona** *listaZonas; // Matriz de ponteiros com tamanho fixo
 
 public:
-    Habitacao(int numColunas, int numLinhas);
+    Habitacao(int wide, int high);
 
     ~Habitacao();
 };

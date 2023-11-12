@@ -1,5 +1,5 @@
-#ifndef POO_SIMULADOR_HABITACAO_ZONA_H
-#define POO_SIMULADOR_HABITACAO_ZONA_H
+#ifndef ZONA_H
+#define ZONA_H
 
 #include <string>
 #include <map>
@@ -19,7 +19,9 @@ private:
 
 public:
     Zona();
+
+    ~Zona();
 };
 
 
-#endif //POO_SIMULADOR_HABITACAO_ZONA_H
+#endif //ZONA_H

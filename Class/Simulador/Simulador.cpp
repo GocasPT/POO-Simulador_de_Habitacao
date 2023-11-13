@@ -9,17 +9,20 @@
 #define VIEW_HEIGHT 55
 #define CONSOLE_HEIGHT 3
 #define INFO_WIDTH 50
+#define ZONAS_WIDTH 30
+#define ZONAS_HEIGHT 15
 
 #define TAG_INPUT ">>"
 
 using std::endl;
 
 Simulador::Simulador() : term(term::Terminal::instance()) {
-    winMenu = new term::Window(term.getNumRows() + term.getNumRows()/2, 15, MENU_WIDTH, MENU_HEIGHT, false);
+    winMenu = new term::Window(term.getNumRows() + term.getNumRows() / 2, 15, MENU_WIDTH, MENU_HEIGHT, false);
     winView = nullptr;
     winConsole = nullptr;
     winInfo = nullptr;
-    //winZones = nullptr;
+    winZones = nullptr;
+    habitacao = nullptr;
 
     inSimulation = false;
 }
@@ -52,17 +55,17 @@ void Simulador::menu() {
         if (opt == 2) return;
     } while (opt != 1);
 
-    int high = 0, wide = 0;
+    int height = 0, wide = 0;
     do {
         winMenu->clear();
         *winMenu << "Numero de linhas: ";
         *winMenu >> input;
-        std::stringstream(input) >> high;
+        std::stringstream(input) >> height;
         *winMenu << "Numero de colunas: ";
         *winMenu >> input;
         std::stringstream(input) >> wide;
 
-        if (high < 2 || high > 4 || wide < 2 || wide > 4) {
+        if (height < 2 || height > 4 || wide < 2 || wide > 4) {
             winMenu->clear();
             *winMenu << "Dimensoes invalidas!\n"
                      << "As dimensoes devem ser entre 2 e 4\n"
@@ -70,18 +73,30 @@ void Simulador::menu() {
             winMenu->getchar();
         }
 
-    } while (high < 2 || high > 4 || wide < 2 || wide > 4);
+    } while (height < 2 || height > 4 || wide < 2 || wide > 4);
 
     winMenu->clear();
     term.clear();
-    init();
+    init(wide, height);
 }
 
-void Simulador::init() {
+void Simulador::init(int wide, int heigth) {
     delete winMenu;
     winView = new term::Window(1, 1, VIEW_WIDTH, VIEW_HEIGHT);
     winConsole = new term::Window(1, VIEW_HEIGHT + 1, VIEW_WIDTH, CONSOLE_HEIGHT);
     winInfo = new term::Window(VIEW_WIDTH + 1, 1, INFO_WIDTH, VIEW_HEIGHT + CONSOLE_HEIGHT);
+
+    habitacao = new Habitacao(wide, heigth);
+    *winInfo << "Habitacao criada com sucesso!\n"
+             << "Dimensoes: " << wide << " por " << heigth << "\n";
+
+    winZones = new term::Window **[habitacao->getHeight()];
+    for (int i = 0; i < habitacao->getHeight(); i++) {
+        winZones[i] = new term::Window *[habitacao->getWide()];
+        for (int j = 0; j < habitacao->getWide(); j++) {
+            winZones[i][j] = new term::Window(j * ZONAS_WIDTH + 2, i * ZONAS_HEIGHT + 2, ZONAS_WIDTH, ZONAS_HEIGHT);
+        }
+    }
 
     winInfo->scrollok(true);
 
@@ -93,7 +108,12 @@ void Simulador::start() {
     run();
 }
 
-void Simulador::stop() { inSimulation = false; }
+void Simulador::stop() {
+    inSimulation = false;
+    *winInfo << "\nSimulador terminado!\n"
+            << "[ENTER PARA CONTINUAR]";
+    winConsole->getchar();
+}
 
 void Simulador::run() {
     //* PLACEHOLDER
@@ -117,31 +137,11 @@ void Simulador::run() {
 }
 
 void Simulador::updateView() {
-    winView->clear();
-    draw(5, 5, 5, 8);
-    draw(15, 5, 7, 4);
-}
-
-void Simulador::draw(int x, int y, int w, int h) {
-    *winView << term::move_to(x, y);
-
-    for (int i = 0; i < h; i++) {
-        for (int j = 0; j < w; j++)
-            if (i == 0 && j == 0 || i == h - 1 && j == 0 || i == 0 && j == w - 1 || i == h - 1 && j == w - 1)
-                *winView << 'o';
-
-            else if (i == 0 || i == h - 1)
-                *winView << '-';
-
-            else if (j == 0 || j == w - 1)
-                *winView << '|';
-
-            else
-                *winView << ' ';
-
-
-        *winView << term::move_to(x, y + i + 1);
-    }
+    for (int i = 0; i < habitacao->getHeight(); i++)
+        for (int j = 0; j < habitacao->getWide(); j++) {
+            winZones[i][j]->clear();
+            //TODO: mostrar informação
+        }
 }
 
 bool Simulador::validateCommand(std::istringstream &comando) {
@@ -161,7 +161,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
                      << "help [comando]\n"
                      << "--all | -t | -h | -z | -r | -a | -p | -s\n";
         } else {
-            for(std::string flag: argv) {
+            for (const std::string &flag: argv) {
                 if (flag == "--all") {
                     *winInfo << "Comandos para o tempo:\n"
                              << "prox\n"
@@ -221,7 +221,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
                              << "znova <linha> <coluna>\n"
                              << "zrem <ID zona>\n"
                              << "zlista\n"
-                            << "[ENTER PARA CONTINUAR]"
+                             << "[ENTER PARA CONTINUAR]"
                              << "\n";
                     winInfo->getchar();
                     continue;
@@ -248,8 +248,8 @@ bool Simulador::validateCommand(std::istringstream &comando) {
                              << "rrem <ID zona> <ID proc. regras> <ID regra>\n"
                              << "asoc <ID zona> <ID proc. regras> <ID aparelho>\n"
                              << "ades <ID zona> <ID proc. regras> <ID aparelho>\n"
-                            << "[ENTER PARA CONTINUAR]"
-                            << "\n";
+                             << "[ENTER PARA CONTINUAR]"
+                             << "\n";
                     winInfo->getchar();
                     continue;
                 }
@@ -257,8 +257,8 @@ bool Simulador::validateCommand(std::istringstream &comando) {
                 if (flag == "-a") {
                     *winInfo << "Comandos para os aparelhos:\n"
                              << "acom <ID zona> <ID aparelho> <comando>\n"
-                            << "[ENTER PARA CONTINUAR]"
-                            << "\n";
+                             << "[ENTER PARA CONTINUAR]"
+                             << "\n";
                     winInfo->getchar();
                     continue;
                 }
@@ -269,8 +269,8 @@ bool Simulador::validateCommand(std::istringstream &comando) {
                              << "prepoe <nome>\n"
                              << "prem <nome>\n"
                              << "plista\n"
-                            << "[ENTER PARA CONTINUAR]"
-                            << "\n";
+                             << "[ENTER PARA CONTINUAR]"
+                             << "\n";
                     winInfo->getchar();
                     continue;
                 }
@@ -288,7 +288,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         }
     }
 
-    // Comandos para o tempo
+        // Comandos para o tempo
     else if (argv[0] == "prox") {
         if (argv.size() == 1) {
             *winInfo << "Comando 'prox'\n";
@@ -304,7 +304,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
             *winInfo << "Comando 'avanca' invalido: Nao tem argumentos\n";
         }
 
-    // Comandos para as habitacoes
+        // Comandos para as habitacoes
     } else if (argv[0] == "hnova") {
         if (argv.size() == 3) {
             *winInfo << "Comando 'hnova'\n";
@@ -341,7 +341,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
             *winInfo << "Comando 'zlista' invalido: Nao tem argumentos\n";
         }
 
-    // Comandos para as zonas
+        // Comandos para as zonas
     } else if (argv[0] == "zcomp") {
         if (argv.size() == 2) {
             *winInfo << "Comando 'zcomp'\n";
@@ -378,7 +378,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
             *winInfo << "Comando 'crem' invalido: Nao tem argumentos\n";
         }
 
-    // Comandos para os processadores
+        // Comandos para os processadores
     } else if (argv[0] == "rnova") {
         if (argv.size() == 5) {
             *winInfo << "Comando 'rnova'\n";
@@ -422,7 +422,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
             *winInfo << "Comando 'ades' invalido: Nao tem argumentos\n";
         }
 
-    // Comandos para os aparelhos
+        // Comandos para os aparelhos
     } else if (argv[0] == "acom") {
         if (argv.size() == 4) {
             *winInfo << "Comando 'acom'\n";
@@ -431,7 +431,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
             *winInfo << "Comando 'acom' invalido: Nao tem argumentos\n";
         }
 
-    // Comandos para copiar/recuperar dos processadores
+        // Comandos para copiar/recuperar dos processadores
     } else if (argv[0] == "psalva") {
         if (argv.size() == 4) {
             *winInfo << "Comando 'psalva'\n";
@@ -461,7 +461,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
             *winInfo << "Comando 'plista' invalido: Nao tem argumentos\n";
         }
 
-    // Comandos para o simulador
+        // Comandos para o simulador
     } else if (argv[0] == "exec") {
         if (argv.size() == 2) {
             *winInfo << "Comando 'exec'\n";
@@ -488,9 +488,12 @@ bool Simulador::readFile(std::string filename) {
 }
 
 Simulador::~Simulador() {
-    delete winMenu;
-    delete winView;
-    delete winConsole;
+    for (int i = 0; i < habitacao->getHeight(); i++)
+        delete[] winZones[i];
+    delete[] winZones;
+    delete habitacao;
     delete winInfo;
-    //delete winZones
+    delete winConsole;
+    delete winView;
+    delete winMenu;
 }

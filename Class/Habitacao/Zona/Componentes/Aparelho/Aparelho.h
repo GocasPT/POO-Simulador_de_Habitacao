@@ -1,12 +1,19 @@
 #ifndef POO_SIMULADOR_HABITACAO_APARELHO_H
 #define POO_SIMULADOR_HABITACAO_APARELHO_H
 
+#include <vector>
+#include "../../Propriedade/Propriedade.h"
+
 class Aparelho {
-private:
     int id;
     char letra;
     bool estado;
+    std::vector<Propriedade> propriedades;
+
 public:
+    Aparelho();
+
+    ~Aparelho();
 };
 
 

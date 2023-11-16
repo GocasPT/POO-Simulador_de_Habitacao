@@ -4,9 +4,13 @@
 #include <string>
 
 class Propriedade {
-private:
     std::string nome;
     int valor;
+
+public:
+    Propriedade();
+
+    ~Propriedade();
 };
 
 

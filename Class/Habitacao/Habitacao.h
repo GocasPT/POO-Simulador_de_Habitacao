@@ -5,9 +5,9 @@
 #include "Zona/Zona.h"
 
 class Habitacao {
-private:
     int wide, height;
     Zona ***listaZonas; // Matriz de ponteiros com tamanho fixo
+    int idCounter;
     //TODO: ID's das zonas + outras classes
 
 public:
@@ -15,11 +15,11 @@ public:
 
     int getWide() const; // Getter para a largura
     int getHeight() const;  // Getter para a altura
-    Zona ***getListaZonas() const; // Getter para a lista de zonas
     Zona *getZona(int x, int y) const;  // Getter para uma zona especifica
     Zona *getZona(int id) const;   // Getter para uma zona especifica
 
-    void setZona(int x, int y); // Setter para uma zona especifica
+    bool addZona(int x, int y); // Setter para uma zona especifica
+    bool removeZona(int id);  // Remove uma zona especifica
 
     ~Habitacao();
 };

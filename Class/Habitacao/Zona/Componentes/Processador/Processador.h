@@ -6,12 +6,14 @@
 #include "Regra/Regra.h"
 
 class Processador {
-private:
     int id;
     std::string comando;
-    std::vector<Regra*> regras;
-public:
+    std::vector<Regra> regras;
 
+public:
+    Processador();
+
+    ~Processador();
 };
 
 

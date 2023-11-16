@@ -3,3 +3,11 @@
 //
 
 #include "Regra.h"
+
+Regra::Regra(Sensor &sensor) : sensor(sensor) {
+
+}
+
+Regra::~Regra() {
+
+}

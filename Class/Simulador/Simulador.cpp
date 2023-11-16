@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <fstream>
 
 #define MENU_WIDTH 85
 #define MENU_HEIGHT 20
@@ -9,10 +10,12 @@
 #define VIEW_HEIGHT 55
 #define CONSOLE_HEIGHT 3
 #define INFO_WIDTH 50
-#define ZONAS_WIDTH 30
-#define ZONAS_HEIGHT 15
+#define ZONAS_WIDTH 40
+#define ZONAS_HEIGHT 12
 
 #define TAG_INPUT ">>"
+
+#define FILE_PATH "../File/"
 
 using std::endl;
 
@@ -55,48 +58,16 @@ void Simulador::menu() {
         if (opt == 2) return;
     } while (opt != 1);
 
-    int height = 0, wide = 0;
-    do {
-        winMenu->clear();
-        *winMenu << "Numero de linhas: ";
-        *winMenu >> input;
-        std::stringstream(input) >> height;
-        *winMenu << "Numero de colunas: ";
-        *winMenu >> input;
-        std::stringstream(input) >> wide;
-
-        if (height < 2 || height > 4 || wide < 2 || wide > 4) {
-            winMenu->clear();
-            *winMenu << "Dimensoes invalidas!\n"
-                     << "As dimensoes devem ser entre 2 e 4\n"
-                     << "[ENTER PARA CONTINUAR]";
-            winMenu->getchar();
-        }
-
-    } while (height < 2 || height > 4 || wide < 2 || wide > 4);
-
     winMenu->clear();
     term.clear();
-    init(wide, height);
+    init();
 }
 
-void Simulador::init(int wide, int heigth) {
+void Simulador::init() {
     delete winMenu;
     winView = new term::Window(1, 1, VIEW_WIDTH, VIEW_HEIGHT);
     winConsole = new term::Window(1, VIEW_HEIGHT + 1, VIEW_WIDTH, CONSOLE_HEIGHT);
     winInfo = new term::Window(VIEW_WIDTH + 1, 1, INFO_WIDTH, VIEW_HEIGHT + CONSOLE_HEIGHT);
-
-    habitacao = new Habitacao(wide, heigth);
-    *winInfo << "Habitacao criada com sucesso!\n"
-             << "Dimensoes: " << wide << " por " << heigth << "\n";
-
-    winZones = new term::Window **[habitacao->getHeight()];
-    for (int i = 0; i < habitacao->getHeight(); i++) {
-        winZones[i] = new term::Window *[habitacao->getWide()];
-        for (int j = 0; j < habitacao->getWide(); j++) {
-            winZones[i][j] = new term::Window(j * ZONAS_WIDTH + 2, i * ZONAS_HEIGHT + 2, ZONAS_WIDTH, ZONAS_HEIGHT);
-        }
-    }
 
     winInfo->scrollok(true);
 
@@ -111,7 +82,7 @@ void Simulador::start() {
 void Simulador::stop() {
     inSimulation = false;
     *winInfo << "\nSimulador terminado!\n"
-            << "[ENTER PARA CONTINUAR]";
+             << "[ENTER PARA CONTINUAR]";
     winConsole->getchar();
 }
 
@@ -136,11 +107,20 @@ void Simulador::run() {
     }
 }
 
+void Simulador::next() {
+
+}
+
 void Simulador::updateView() {
+    if (habitacao == nullptr) return;
+
     for (int i = 0; i < habitacao->getHeight(); i++)
         for (int j = 0; j < habitacao->getWide(); j++) {
             winZones[i][j]->clear();
-            //TODO: mostrar informação
+            if (habitacao->getZona(i, j) != nullptr) {
+                Zona &zona = *habitacao->getZona(i, j);
+                *winZones[i][j] << zona.getId();
+            }
         }
 }
 
@@ -294,150 +274,184 @@ bool Simulador::validateCommand(std::istringstream &comando) {
             *winInfo << "Comando 'prox'\n";
             return true;
         } else {
-            *winInfo << "Comando 'prox' invalido: Nao tem argumentos\n";
+            *winInfo << "Comando 'prox' invalido - prox\n";
         }
     } else if (argv[0] == "avanca") {
         if (argv.size() == 2) {
-            *winInfo << "Comando 'avanca'\n";
+            *winInfo << "Comando 'avanca' com argumento " << argv[1] << "\n";
             return true;
         } else {
-            *winInfo << "Comando 'avanca' invalido: Nao tem argumentos\n";
+            *winInfo << "Comando 'avanca' invalido - avanca <n>\n";
         }
 
         // Comandos para as habitacoes
     } else if (argv[0] == "hnova") {
         if (argv.size() == 3) {
-            *winInfo << "Comando 'hnova'\n";
+            *winInfo << "Comando 'hnova' com argumentos [" << argv[1] << " " << argv[2] << "]\n";
+            if (!createHabitacao(std::stoi(argv[1]), std::stoi(argv[2])))
+                *winInfo << "Dimensoes invalidas!\n";
             return true;
         } else {
-            *winInfo << "Comando 'hnova' invalido: Nao tem argumentos\n";
+            *winInfo << "Comando 'hnova' invalido - hnova <num linhas> <num colunas>\n";
         }
     } else if (argv[0] == "hrem") {
         if (argv.size() == 1) {
             *winInfo << "Comando 'hrem'\n";
+            deleteHabitacao();
             return true;
         } else {
-            *winInfo << "Comando 'hrem' invalido: Nao tem argumentos\n";
+            *winInfo << "Comando 'hrem' invalido - hrem\n";
         }
     } else if (argv[0] == "znova") {
         if (argv.size() == 3) {
-            *winInfo << "Comando 'znova'\n";
+            *winInfo << "Comando 'znova' com argumentos [" << argv[1] << " " << argv[2] << "]\n";
+
+            if (habitacao == nullptr) {
+                *winInfo << "Nao existe habitacao!\n";
+                return true;
+            }
+
+            int x = std::stoi(argv[1]);
+            int y = std::stoi(argv[2]);
+
+            if (!habitacao->addZona(x, y)) {
+                *winInfo << "Posicao invalida!\n";
+                return true;
+            }
+
+            *winInfo << "Zona adicionada com sucesso!\n"
+                     << "ID: " << habitacao->getZona(x, y)->getId() << "\n";
             return true;
         } else {
-            *winInfo << "Comando 'znova' invalido: Nao tem argumentos\n";
+            *winInfo << "Comando 'znova' invalido - znova <linha> <coluna>\n";
         }
     } else if (argv[0] == "zrem") {
         if (argv.size() == 2) {
-            *winInfo << "Comando 'zrem'\n";
+            *winInfo << "Comando 'zrem' com argumento " << argv[1] << "\n";
+
+            if (habitacao == nullptr) {
+                *winInfo << "Nao existe habitacao!\n";
+                return true;
+            }
+
+            if (!habitacao->removeZona(std::stoi(argv[1]))) {
+                *winInfo << "Zona nao encontrada!\n";
+                return true;
+            }
+
+            *winInfo << "Zona removida com sucesso!\n";
             return true;
         } else {
-            *winInfo << "Comando 'zrem' invalido: Nao tem argumentos\n";
+            *winInfo << "Comando 'zrem' invalido - zrem <ID zona>\n";
         }
     } else if (argv[0] == "zlista") {
         if (argv.size() == 1) {
             *winInfo << "Comando 'zlista'\n";
             return true;
         } else {
-            *winInfo << "Comando 'zlista' invalido: Nao tem argumentos\n";
+            *winInfo << "Comando 'zlista' invalido - zlista\n";
         }
 
         // Comandos para as zonas
     } else if (argv[0] == "zcomp") {
         if (argv.size() == 2) {
-            *winInfo << "Comando 'zcomp'\n";
+            *winInfo << "Comando 'zcomp' com argumento " << argv[1] << "\n";
             return true;
         } else {
-            *winInfo << "Comando 'zcomp' invalido: Nao tem argumentos\n";
+            *winInfo << "Comando 'zcomp' invalido - zcomp <ID zona>\n";
         }
     } else if (argv[0] == "zprops") {
         if (argv.size() == 2) {
-            *winInfo << "Comando 'zprops'\n";
+            *winInfo << "Comando 'zprops' com argumento " << argv[1] << "\n";
             return true;
         } else {
-            *winInfo << "Comando 'zprops' invalido: Nao tem argumentos\n";
+            *winInfo << "Comando 'zprops' invalido - zprops <ID zona>\n";
         }
     } else if (argv[0] == "pmod") {
-        if (argv.size() == 3) {
-            *winInfo << "Comando 'pmod'\n";
+        if (argv.size() == 4) {
+            *winInfo << "Comando 'pmod' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "]\n";
             return true;
         } else {
-            *winInfo << "Comando 'pmod' invalido: Nao tem argumentos\n";
+            *winInfo << "Comando 'pmod' invalido - pmod <ID zona> <nome> <valor>\n";
         }
     } else if (argv[0] == "cnovo") {
         if (argv.size() == 4) {
-            *winInfo << "Comando 'cnovo'\n";
+            *winInfo << "Comando 'cnovo' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
             return true;
         } else {
-            *winInfo << "Comando 'cnovo' invalido: Nao tem argumentos\n";
+            *winInfo << "Comando 'cnovo' invalido - cnovo <ID zona> <s | p | a> <tipo | comando>\n";
         }
     } else if (argv[0] == "crem") {
         if (argv.size() == 4) {
-            *winInfo << "Comando 'crem'\n";
+            *winInfo << "Comando 'crem' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
             return true;
         } else {
-            *winInfo << "Comando 'crem' invalido: Nao tem argumentos\n";
+            *winInfo << "Comando 'crem' invalido - crem <ID zona> <s | p | a> <ID>\n";
         }
 
         // Comandos para os processadores
     } else if (argv[0] == "rnova") {
+        //TODO: verificar o tamanho de arumentos
         if (argv.size() == 5) {
-            *winInfo << "Comando 'rnova'\n";
+            *winInfo << "Comando 'rnova' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << " "
+                     << argv[4] << "\n";
             return true;
         } else {
-            *winInfo << "Comando 'rnova' invalido: Nao tem argumentos\n";
+            *winInfo
+                    << "Comando 'rnova' invalido - rnova <ID zona> <ID proc. regras> <regra> <ID sensor> [param1] [param2] [...]\n";
         }
     } else if (argv[0] == "pmuda") {
         if (argv.size() == 4) {
-            *winInfo << "Comando 'pmuda'\n";
+            *winInfo << "Comando 'pmuda' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
             return true;
         } else {
-            *winInfo << "Comando 'pmuda' invalido: Nao tem argumentos\n";
+            *winInfo << "Comando 'pmuda' invalido - pmuda <ID zona> <ID proc. regras> <novo comando>\n";
         }
     } else if (argv[0] == "rlista") {
         if (argv.size() == 3) {
-            *winInfo << "Comando 'rlista'\n";
+            *winInfo << "Comando 'rlista' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
             return true;
         } else {
-            *winInfo << "Comando 'rlista' invalido: Nao tem argumentos\n";
+            *winInfo << "Comando 'rlista' invalido - rlista <ID zona> <ID proc. regras>\n";
         }
     } else if (argv[0] == "rrem") {
         if (argv.size() == 4) {
-            *winInfo << "Comando 'rrem'\n";
+            *winInfo << "Comando 'rrem' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
             return true;
         } else {
-            *winInfo << "Comando 'rrem' invalido: Nao tem argumentos\n";
+            *winInfo << "Comando 'rrem' invalido - rrem <ID zona> <ID proc. regras> <ID regra>\n";
         }
     } else if (argv[0] == "asoc") {
         if (argv.size() == 4) {
-            *winInfo << "Comando 'asoc'\n";
+            *winInfo << "Comando 'asoc' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
             return true;
         } else {
-            *winInfo << "Comando 'asoc' invalido: Nao tem argumentos\n";
+            *winInfo << "Comando 'asoc' invalido - asoc <ID zona> <ID proc. regras> <ID aparelho>\n";
         }
     } else if (argv[0] == "ades") {
         if (argv.size() == 4) {
-            *winInfo << "Comando 'ades'\n";
+            *winInfo << "Comando 'ades' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
             return true;
         } else {
-            *winInfo << "Comando 'ades' invalido: Nao tem argumentos\n";
+            *winInfo << "Comando 'ades' invalido - ades <ID zona> <ID proc. regras> <ID aparelho>\n";
         }
 
         // Comandos para os aparelhos
     } else if (argv[0] == "acom") {
         if (argv.size() == 4) {
-            *winInfo << "Comando 'acom'\n";
+            *winInfo << "Comando 'acom' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
             return true;
         } else {
-            *winInfo << "Comando 'acom' invalido: Nao tem argumentos\n";
+            *winInfo << "Comando 'acom' invalido - acom <ID zona> <ID aparelho> <comando>\n";
         }
 
         // Comandos para copiar/recuperar dos processadores
     } else if (argv[0] == "psalva") {
         if (argv.size() == 4) {
-            *winInfo << "Comando 'psalva'\n";
+            *winInfo << "Comando 'psalva' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
             return true;
         } else {
-            *winInfo << "Comando 'psalva' invalido: Nao tem argumentos\n";
+            *winInfo << "Comando 'psalva' invalido - psalva <ID zona> <ID proc. regras> <nome>\n";
         }
     } else if (argv[0] == "prepoe") {
         if (argv.size() == 2) {
@@ -448,26 +462,29 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         }
     } else if (argv[0] == "prem") {
         if (argv.size() == 2) {
-            *winInfo << "Comando 'prem'\n";
+            *winInfo << "Comando 'prem' com argumento " << argv[1] << "\n";
             return true;
         } else {
-            *winInfo << "Comando 'prem' invalido: Nao tem argumentos\n";
+            *winInfo << "Comando 'prem' invalido - prem <nome>\n";
         }
     } else if (argv[0] == "plista") {
         if (argv.size() == 1) {
             *winInfo << "Comando 'plista'\n";
             return true;
         } else {
-            *winInfo << "Comando 'plista' invalido: Nao tem argumentos\n";
+            *winInfo << "Comando 'plista' invalido - plista\n";
         }
 
         // Comandos para o simulador
     } else if (argv[0] == "exec") {
         if (argv.size() == 2) {
-            *winInfo << "Comando 'exec'\n";
+            *winInfo << "Comando 'exec' com argumento " << argv[1] << "\n";
+            if (!readFile(argv[1])) {
+                *winInfo << "Ficheiro nao encontrado!\n";
+            }
             return true;
         } else {
-            *winInfo << "Comando 'exec' invalido: Nao tem argumentos\n";
+            *winInfo << "Comando 'exec' invalido - exec <nome de ficheiro>\n";
         }
     } else if (argv[0] == "sair") {
         if (argv.size() == 1) {
@@ -475,23 +492,68 @@ bool Simulador::validateCommand(std::istringstream &comando) {
             stop();
             return true;
         } else {
-            *winInfo << "Comando 'prox' invalido: Nao tem argumentos";
+            *winInfo << "Comando 'sair' invalido - sair";
         }
     }
 
     return false;
 }
 
-//TODO: Fazer a função de leitura de ficheiro de comando
-bool Simulador::readFile(std::string filename) {
+bool Simulador::readFile(const std::string &filename) {
+    std::fstream file(FILE_PATH + filename, std::ios::in);
+
+    if (file.is_open()) {
+        std::string line;
+        while (std::getline(file, line)) {
+            std::istringstream cmd(line);
+            if (!validateCommand(cmd)) {
+                *winInfo << "Comando invalido!\n";
+            }
+        }
+
+        return true;
+    }
+
     return false;
 }
 
-Simulador::~Simulador() {
-    for (int i = 0; i < habitacao->getHeight(); i++)
+bool Simulador::createHabitacao(int wide, int heigth) {
+    if (wide < 2 || wide > 4 || heigth < 2 || heigth > 4) return false;
+
+    if (habitacao != nullptr)
+        deleteHabitacao();
+
+    habitacao = new Habitacao(wide, heigth);
+    *winInfo << "Habitacao criada com sucesso!\n"
+             << "Dimensoes: " << wide << " por " << heigth << "\n";
+
+    winZones = new term::Window **[heigth];
+    for (int i = 0; i < heigth; i++) {
+        winZones[i] = new term::Window *[wide];
+        for (int j = 0; j < wide; j++) {
+            winZones[i][j] = new term::Window(j * ZONAS_WIDTH + 2, i * ZONAS_HEIGHT + 2, ZONAS_WIDTH, ZONAS_HEIGHT);
+        }
+    }
+
+    return true;
+}
+
+void Simulador::deleteHabitacao() {
+    if (habitacao == nullptr) return;
+
+    for (int i = 0; i < habitacao->getHeight(); i++) {
+        for (int j = 0; j < habitacao->getWide(); j++)
+            delete winZones[i][j];
         delete[] winZones[i];
+    }
     delete[] winZones;
     delete habitacao;
+
+    habitacao = nullptr;
+}
+
+Simulador::~Simulador() {
+    deleteHabitacao();
     delete winInfo;
     delete winConsole;
     delete winView;

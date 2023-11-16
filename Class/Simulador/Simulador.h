@@ -12,16 +12,20 @@ class Simulador {
     term::Window ***winZones; // Janelas das zonas
 
     bool inSimulation;  // Flag que indica se o simulador esta a correr
-    Habitacao *habitacao;
+    Habitacao *habitacao; // Ponteiro para a habitacao
 
-    void init(int wide, int heigth);    // Inicializa o simulador
+    void init();    // Inicializa o simulador
     void start();   // Inicia o simulador
     void stop();    // Para o simulador
-    void run(); // Corre o simulador
-    void next();
+    void run(); // Loop principal do simulador
+    void next(); // Proximo passo do simulador
     void updateView();  // Atualiza a view do simulador
     bool validateCommand(std::istringstream &command);  // Valida um comando
-    bool readFile(std::string filename);    // Le um ficheiro de configuracao
+    bool readFile(const std::string &filename);    // Le um ficheiro de configuracao
+
+    bool createHabitacao(int wide, int heigth); // Cria uma habitacao
+    void deleteHabitacao(); // Apaga a habitacao
+
 
 public:
     Simulador();

@@ -1,0 +1,5 @@
+prox
+avanca 10
+zlista
+zcomp 10
+sair

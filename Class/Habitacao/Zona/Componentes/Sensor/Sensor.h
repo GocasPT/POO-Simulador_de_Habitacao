@@ -4,11 +4,14 @@
 #include <string>
 
 class Sensor {
-private:
     int id;
     char letra;
     std::string propriedade;
+
 public:
+    Sensor();
+
+    ~Sensor();
 };
 
 

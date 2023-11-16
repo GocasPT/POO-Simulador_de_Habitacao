@@ -10,15 +10,16 @@
 
 
 class Zona {
-private:
-    int id;
-    std::map<std::string, Propriedade*> propriedades; //mapa de ponteiro de objetos
-    std::map<int, Sensor*> sensores;
-    std::map<int, Aparelho*> aparelhos;
-    std::map<int, Processador*> processadores;
+    const int id;
+    /*std::map<std::string, Propriedade> propriedades;
+    std::map<int, Sensor> sensores;
+    std::map<int, Aparelho> aparelhos;
+    std::map<int, Processador> processadores;*/
 
 public:
-    Zona();
+    Zona(int id);
+
+    int getId() const;
 
     ~Zona();
 };

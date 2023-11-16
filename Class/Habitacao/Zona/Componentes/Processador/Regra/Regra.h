@@ -11,11 +11,13 @@
 #include "../../../Propriedade/Propriedade.h"
 
 class Regra {
-private:
-    Sensor* sensor;
-    std::vector<Propriedade*> propriedades;
+    Sensor &sensor;
+    std::vector<Propriedade> propriedades;
 
 public:
+    Regra(Sensor &sensor);
+
+    ~Regra();
 };
 
 

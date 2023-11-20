@@ -1,0 +1,2 @@
+hnova 2 2
+znova 1 1

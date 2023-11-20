@@ -17,6 +17,8 @@ int Habitacao::getWide() const { return wide; }
 
 int Habitacao::getHeight() const { return height; }
 
+Zona ***Habitacao::getListaZonas() const { return listaZonas; }
+
 Zona *Habitacao::getZona(int x, int y) const {
     if (x < 0 || x >= wide || y < 0 || y >= height)
         return nullptr;
@@ -25,12 +27,10 @@ Zona *Habitacao::getZona(int x, int y) const {
 }
 
 Zona *Habitacao::getZona(int id) const {
-    /*
-    for(int i = 0; i < wide; i++)
-        for(int j = 0; j < height; j++)
-            if(listaZonas[j][i]->getId() == id)
+    for (int i = 0; i < wide; i++)
+        for (int j = 0; j < height; j++)
+            if (listaZonas[j][i]->getId() == id)
                 return listaZonas[j][i];
-    */
     return nullptr;
 }
 

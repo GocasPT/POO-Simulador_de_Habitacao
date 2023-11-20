@@ -12,7 +12,7 @@
 
 class Regra {
     Sensor &sensor;
-    std::vector<Propriedade> propriedades;
+    //std::vector<Propriedade> propriedades;
 
 public:
     Regra(Sensor &sensor);

@@ -23,9 +23,9 @@ class Simulador {
     bool validateCommand(std::istringstream &command);  // Valida um comando
     bool readFile(const std::string &filename);    // Le um ficheiro de configuracao
 
+    bool checkHabitacao(); // Verifica se a habitacao existe
     bool createHabitacao(int wide, int heigth); // Cria uma habitacao
     void deleteHabitacao(); // Apaga a habitacao
-
 
 public:
     Simulador();

@@ -118,6 +118,7 @@ void Simulador::updateView() {
         for (int j = 0; j < habitacao->getWide(); j++) {
             winZones[i][j]->clear();
             if (habitacao->getZona(i, j) != nullptr) {
+                *winInfo << "Zona nao encontrada!\n";
                 Zona &zona = *habitacao->getZona(i, j);
                 *winZones[i][j] << zona.getId();
             }
@@ -157,7 +158,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
                              << "Comandos para as zonas:\n"
                              << "zcomp <ID zona>\n"
                              << "zprops <ID zona>\n"
-                             << "pmod <ID zona> <nome> <valor>\n"
+                             << "pmod <ID zona> <name> <value>\n"
                              << "cnovo <ID zona> <s | p | a> <tipo | comando>\n"
                              << "crem <ID zona> <s | p | a> <ID>\n"
                              << "\n"
@@ -173,13 +174,13 @@ bool Simulador::validateCommand(std::istringstream &comando) {
                              << "acom <ID zona> <ID aparelho> <comando>\n"
                              << "\n"
                              << "Comandos para copiar/recuperar dos processadores:\n"
-                             << "psalva <ID zona> <ID proc. regras> <nome>\n"
-                             << "prepoe <nome>\n"
-                             << "prem <nome>\n"
+                             << "psalva <ID zona> <ID proc. regras> <name>\n"
+                             << "prepoe <name>\n"
+                             << "prem <name>\n"
                              << "plista\n"
                              << "\n"
                              << "Comandos para o simulador:\n"
-                             << "exec <nome de ficheiro>\n"
+                             << "exec <name de ficheiro>\n"
                              << "sair\n";
                     return true;
                 }
@@ -211,7 +212,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
                     *winInfo << "Comandos para as zonas:\n"
                              << "zcomp <ID zona>\n"
                              << "zprops <ID zona>\n"
-                             << "pmod <ID zona> <nome> <valor>\n"
+                             << "pmod <ID zona> <name> <value>\n"
                              << "cnovo <ID zona> <s | p | a> <tipo | comando>\n"
                              << "crem <ID zona> <s | p | a> <ID>\n"
                              << "[ENTER PARA CONTINUAR]"
@@ -245,9 +246,9 @@ bool Simulador::validateCommand(std::istringstream &comando) {
 
                 if (flag == "-p") {
                     *winInfo << "Comandos para copiar/recuperar dos processadores:\n"
-                             << "psalva <ID zona> <ID proc. regras> <nome>\n"
-                             << "prepoe <nome>\n"
-                             << "prem <nome>\n"
+                             << "psalva <ID zona> <ID proc. regras> <name>\n"
+                             << "prepoe <name>\n"
+                             << "prem <name>\n"
                              << "plista\n"
                              << "[ENTER PARA CONTINUAR]"
                              << "\n";
@@ -257,7 +258,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
 
                 if (flag == "-s") {
                     *winInfo << "Comandos para o simulador:\n"
-                             << "exec <nome de ficheiro>\n"
+                             << "exec <name de ficheiro>\n"
                              << "sair\n";
                     winInfo->getchar();
                     continue;
@@ -272,6 +273,10 @@ bool Simulador::validateCommand(std::istringstream &comando) {
     else if (argv[0] == "prox") {
         if (argv.size() == 1) {
             *winInfo << "Comando 'prox'\n";
+
+            if (!checkHabitacao()) return true;
+
+            next();
             return true;
         } else {
             *winInfo << "Comando 'prox' invalido - prox\n";
@@ -279,6 +284,11 @@ bool Simulador::validateCommand(std::istringstream &comando) {
     } else if (argv[0] == "avanca") {
         if (argv.size() == 2) {
             *winInfo << "Comando 'avanca' com argumento " << argv[1] << "\n";
+
+            if (!checkHabitacao()) return true;
+
+            for (int i = 0; i < std::stoi(argv[1]); i++)
+                next();
             return true;
         } else {
             *winInfo << "Comando 'avanca' invalido - avanca <n>\n";
@@ -306,10 +316,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         if (argv.size() == 3) {
             *winInfo << "Comando 'znova' com argumentos [" << argv[1] << " " << argv[2] << "]\n";
 
-            if (habitacao == nullptr) {
-                *winInfo << "Nao existe habitacao!\n";
-                return true;
-            }
+            if (!checkHabitacao()) return true;
 
             int x = std::stoi(argv[1]);
             int y = std::stoi(argv[2]);
@@ -329,10 +336,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         if (argv.size() == 2) {
             *winInfo << "Comando 'zrem' com argumento " << argv[1] << "\n";
 
-            if (habitacao == nullptr) {
-                *winInfo << "Nao existe habitacao!\n";
-                return true;
-            }
+            if (!checkHabitacao()) return true;
 
             if (!habitacao->removeZona(std::stoi(argv[1]))) {
                 *winInfo << "Zona nao encontrada!\n";
@@ -347,6 +351,36 @@ bool Simulador::validateCommand(std::istringstream &comando) {
     } else if (argv[0] == "zlista") {
         if (argv.size() == 1) {
             *winInfo << "Comando 'zlista'\n";
+
+            if (!checkHabitacao()) return true;
+
+            Zona ***listaZonas = habitacao->getListaZonas();
+            int wide = habitacao->getWide();
+            int height = habitacao->getHeight();
+
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < wide; j++) {
+                    Zona *zona = listaZonas[i][j];
+
+                    if (!zona) continue;
+
+                    int aparelhos = 0;
+                    int sensores = 0;
+                    int processadores = 0;
+
+                    for (const auto &componenete: zona->getComponentes()) {
+                        if (componenete.second.getType() == APARELHO) aparelhos++;
+                        else if (componenete.second.getType() == SENSOR) sensores++;
+                        else if (componenete.second.getType() == PROCESSADOR) processadores++;
+                    }
+
+                    *winInfo << "Zona '" << zona->getId() << "'\n";
+                    *winInfo << "Aparelhos: " << aparelhos << "\n";
+                    *winInfo << "Sensores: " << sensores << "\n";
+                    *winInfo << "Processadores: " << processadores << "\n\n";
+                }
+            }
+
             return true;
         } else {
             *winInfo << "Comando 'zlista' invalido - zlista\n";
@@ -356,6 +390,20 @@ bool Simulador::validateCommand(std::istringstream &comando) {
     } else if (argv[0] == "zcomp") {
         if (argv.size() == 2) {
             *winInfo << "Comando 'zcomp' com argumento " << argv[1] << "\n";
+
+            if (!checkHabitacao()) return true;
+
+            Zona *zona = habitacao->getZona(std::stoi(argv[1]));
+            if (!zona) {
+                *winInfo << "Zona nao encontrada!\n";
+                return true;
+            }
+
+            for (const auto &componente: zona->getComponentes()) {
+                *winInfo << "Componente '" << componente.second.getId() << "'\n";
+                *winInfo << "Tipo: " << componente.second.getType() << "\n";
+            }
+
             return true;
         } else {
             *winInfo << "Comando 'zcomp' invalido - zcomp <ID zona>\n";
@@ -363,6 +411,20 @@ bool Simulador::validateCommand(std::istringstream &comando) {
     } else if (argv[0] == "zprops") {
         if (argv.size() == 2) {
             *winInfo << "Comando 'zprops' com argumento " << argv[1] << "\n";
+
+            if (!checkHabitacao()) return true;
+
+            Zona *zona = habitacao->getZona(std::stoi(argv[1]));
+            if (!zona) {
+                *winInfo << "Zona nao encontrada!\n";
+                return true;
+            }
+
+            for (const auto &propriedade: zona->getPropriedades()) {
+                *winInfo << "Propriedade '" << propriedade.second.getName() << "'\n";
+                *winInfo << "Valor: " << propriedade.second.getValue() << "\n\n";
+            }
+
             return true;
         } else {
             *winInfo << "Comando 'zprops' invalido - zprops <ID zona>\n";
@@ -372,7 +434,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
             *winInfo << "Comando 'pmod' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "]\n";
             return true;
         } else {
-            *winInfo << "Comando 'pmod' invalido - pmod <ID zona> <nome> <valor>\n";
+            *winInfo << "Comando 'pmod' invalido - pmod <ID zona> <name> <value>\n";
         }
     } else if (argv[0] == "cnovo") {
         if (argv.size() == 4) {
@@ -451,7 +513,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
             *winInfo << "Comando 'psalva' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
             return true;
         } else {
-            *winInfo << "Comando 'psalva' invalido - psalva <ID zona> <ID proc. regras> <nome>\n";
+            *winInfo << "Comando 'psalva' invalido - psalva <ID zona> <ID proc. regras> <name>\n";
         }
     } else if (argv[0] == "prepoe") {
         if (argv.size() == 2) {
@@ -465,7 +527,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
             *winInfo << "Comando 'prem' com argumento " << argv[1] << "\n";
             return true;
         } else {
-            *winInfo << "Comando 'prem' invalido - prem <nome>\n";
+            *winInfo << "Comando 'prem' invalido - prem <name>\n";
         }
     } else if (argv[0] == "plista") {
         if (argv.size() == 1) {
@@ -484,7 +546,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
             }
             return true;
         } else {
-            *winInfo << "Comando 'exec' invalido - exec <nome de ficheiro>\n";
+            *winInfo << "Comando 'exec' invalido - exec <name de ficheiro>\n";
         }
     } else if (argv[0] == "sair") {
         if (argv.size() == 1) {
@@ -517,11 +579,19 @@ bool Simulador::readFile(const std::string &filename) {
     return false;
 }
 
+bool Simulador::checkHabitacao() {
+    if (!habitacao) {
+        *winInfo << "Nao existe habitacao!\n";
+        return false;
+    }
+
+    return true;
+}
+
 bool Simulador::createHabitacao(int wide, int heigth) {
     if (wide < 2 || wide > 4 || heigth < 2 || heigth > 4) return false;
 
-    if (habitacao != nullptr)
-        deleteHabitacao();
+    deleteHabitacao();
 
     habitacao = new Habitacao(wide, heigth);
     *winInfo << "Habitacao criada com sucesso!\n"

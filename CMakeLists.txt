@@ -4,9 +4,11 @@ project(POO-Simulador_Habitacao)
 set(CMAKE_CXX_STANDARD 23)
 
 add_executable(${PROJECT_NAME} main.cpp
-        Lib/curses.h
-        Lib/Terminal.cpp
-        Lib/Terminal.h
+        Lib/Terminal/curses.h
+        Lib/Terminal/Terminal.cpp
+        Lib/Terminal/Terminal.h
+        Lib/utils/utils.h
+        Lib/utils/utils.cpp
         Class/Simulador/Simulador.cpp
         Class/Simulador/Simulador.h
         Class/Habitacao/Habitacao.cpp

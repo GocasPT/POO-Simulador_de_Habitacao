@@ -1,17 +1,18 @@
 #include "Simulador.h"
+#include "../../Lib/utils/utils.h"
 
 #include <string>
 #include <vector>
 #include <fstream>
 
-#define MENU_WIDTH 85
+#define MENU_WIDTH 75
 #define MENU_HEIGHT 20
 #define VIEW_WIDTH 180
 #define VIEW_HEIGHT 55
 #define CONSOLE_HEIGHT 3
 #define INFO_WIDTH 50
-#define ZONAS_WIDTH 40
-#define ZONAS_HEIGHT 12
+#define ZONAS_WIDTH (VIEW_WIDTH / 4 - 1)
+#define ZONAS_HEIGHT (VIEW_HEIGHT / 4)
 
 #define TAG_INPUT ">>"
 
@@ -81,13 +82,13 @@ void Simulador::start() {
 
 void Simulador::stop() {
     inSimulation = false;
-    *winInfo << "\nSimulador terminado!\n"
+    deleteHabitacao();
+    *winInfo << "Simulador terminado!\n"
              << "[ENTER PARA CONTINUAR]";
     winConsole->getchar();
 }
 
 void Simulador::run() {
-    //* PLACEHOLDER
     updateView();
 
     while (inSimulation) {
@@ -101,7 +102,6 @@ void Simulador::run() {
             *winInfo << "Comando invalido!\n";
         }
 
-        //PLACEHOLDER
         updateView();
         winConsole->clear();
     }
@@ -118,7 +118,6 @@ void Simulador::updateView() {
         for (int j = 0; j < habitacao->getWide(); j++) {
             winZones[i][j]->clear();
             if (habitacao->getZona(i, j) != nullptr) {
-                *winInfo << "Zona nao encontrada!\n";
                 Zona &zona = *habitacao->getZona(i, j);
                 *winZones[i][j] << zona.getId();
             }
@@ -269,6 +268,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         }
     }
 
+        //TODO: validar o tipo de argumentos (int, string, etc)
         // Comandos para o tempo
     else if (argv[0] == "prox") {
         if (argv.size() == 1) {
@@ -282,7 +282,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
             *winInfo << "Comando 'prox' invalido - prox\n";
         }
     } else if (argv[0] == "avanca") {
-        if (argv.size() == 2) {
+        if (argv.size() == 2 && isNumber(argv[1])) {
             *winInfo << "Comando 'avanca' com argumento " << argv[1] << "\n";
 
             if (!checkHabitacao()) return true;
@@ -296,7 +296,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
 
         // Comandos para as habitacoes
     } else if (argv[0] == "hnova") {
-        if (argv.size() == 3) {
+        if (argv.size() == 3 && isNumber(argv[1]) && isNumber(argv[2])) {
             *winInfo << "Comando 'hnova' com argumentos [" << argv[1] << " " << argv[2] << "]\n";
             if (!createHabitacao(std::stoi(argv[1]), std::stoi(argv[2])))
                 *winInfo << "Dimensoes invalidas!\n";
@@ -313,7 +313,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
             *winInfo << "Comando 'hrem' invalido - hrem\n";
         }
     } else if (argv[0] == "znova") {
-        if (argv.size() == 3) {
+        if (argv.size() == 3 && isNumber(argv[1]) && isNumber(argv[2])) {
             *winInfo << "Comando 'znova' com argumentos [" << argv[1] << " " << argv[2] << "]\n";
 
             if (!checkHabitacao()) return true;
@@ -327,23 +327,26 @@ bool Simulador::validateCommand(std::istringstream &comando) {
             }
 
             *winInfo << "Zona adicionada com sucesso!\n"
-                     << "ID: " << habitacao->getZona(x, y)->getId() << "\n";
+                     << "ID: " << habitacao->getZona(x, y)->getId() << "\n"
+                     << "Posicao: " << x << " " << y << "\n";
             return true;
         } else {
             *winInfo << "Comando 'znova' invalido - znova <linha> <coluna>\n";
         }
     } else if (argv[0] == "zrem") {
-        if (argv.size() == 2) {
+        if (argv.size() == 2 && isNumber(argv[1])) {
             *winInfo << "Comando 'zrem' com argumento " << argv[1] << "\n";
 
             if (!checkHabitacao()) return true;
 
-            if (!habitacao->removeZona(std::stoi(argv[1]))) {
+            int id = std::stoi(argv[1]);
+
+            if (!habitacao->removeZona(id)) {
                 *winInfo << "Zona nao encontrada!\n";
                 return true;
             }
 
-            *winInfo << "Zona removida com sucesso!\n";
+            *winInfo << "Zona de ID " << id << " removida com sucesso!\n";
             return true;
         } else {
             *winInfo << "Comando 'zrem' invalido - zrem <ID zona>\n";
@@ -430,20 +433,20 @@ bool Simulador::validateCommand(std::istringstream &comando) {
             *winInfo << "Comando 'zprops' invalido - zprops <ID zona>\n";
         }
     } else if (argv[0] == "pmod") {
-        if (argv.size() == 4) {
+        if (argv.size() == 4 && isNumber(argv[1]) && isNumber(argv[3]) && !isNumber(argv[2])) {
             *winInfo << "Comando 'pmod' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "]\n";
             return true;
         } else {
             *winInfo << "Comando 'pmod' invalido - pmod <ID zona> <name> <value>\n";
         }
     } else if (argv[0] == "cnovo") {
-        if (argv.size() == 4) {
+        if (argv.size() == 4 && isNumber(argv[1]) && (argv[2] == "s" || argv[2] == "p" || argv[2] == "a")) {
             *winInfo << "Comando 'cnovo' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
             return true;
         } else {
             *winInfo << "Comando 'cnovo' invalido - cnovo <ID zona> <s | p | a> <tipo | comando>\n";
         }
-    } else if (argv[0] == "crem") {
+    } else if (argv[0] == "crem" && isNumber(argv[1]) && (argv[2] == "s" || argv[2] == "p" || argv[2] == "a")) {
         if (argv.size() == 4) {
             *winInfo << "Comando 'crem' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
             return true;
@@ -454,7 +457,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         // Comandos para os processadores
     } else if (argv[0] == "rnova") {
         //TODO: verificar o tamanho de arumentos
-        if (argv.size() == 5) {
+        if (argv.size() >= 6 && isNumber(argv[1])) {
             *winInfo << "Comando 'rnova' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << " "
                      << argv[4] << "\n";
             return true;
@@ -463,14 +466,14 @@ bool Simulador::validateCommand(std::istringstream &comando) {
                     << "Comando 'rnova' invalido - rnova <ID zona> <ID proc. regras> <regra> <ID sensor> [param1] [param2] [...]\n";
         }
     } else if (argv[0] == "pmuda") {
-        if (argv.size() == 4) {
+        if (argv.size() == 4 && isNumber(argv[1])) {
             *winInfo << "Comando 'pmuda' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
             return true;
         } else {
             *winInfo << "Comando 'pmuda' invalido - pmuda <ID zona> <ID proc. regras> <novo comando>\n";
         }
     } else if (argv[0] == "rlista") {
-        if (argv.size() == 3) {
+        if (argv.size() == 3 && isNumber(argv[1])) {
             *winInfo << "Comando 'rlista' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
             return true;
         } else {
@@ -581,7 +584,7 @@ bool Simulador::readFile(const std::string &filename) {
 
 bool Simulador::checkHabitacao() {
     if (!habitacao) {
-        *winInfo << "Nao existe habitacao!\n";
+        *winInfo << "Nao existe habitacao!\n\n";
         return false;
     }
 
@@ -594,8 +597,8 @@ bool Simulador::createHabitacao(int wide, int heigth) {
     deleteHabitacao();
 
     habitacao = new Habitacao(wide, heigth);
-    *winInfo << "Habitacao criada com sucesso!\n"
-             << "Dimensoes: " << wide << " por " << heigth << "\n";
+    *winInfo << "\nHabitacao criada com sucesso!\n"
+             << "Dimensoes:\n\tLargura: " << wide << "\n\tAltura: " << heigth << "\n\n";
 
     winZones = new term::Window **[heigth];
     for (int i = 0; i < heigth; i++) {
@@ -620,12 +623,12 @@ void Simulador::deleteHabitacao() {
     delete habitacao;
 
     habitacao = nullptr;
+
+    *winInfo << "Habitacao removida com sucesso!\n\n";
 }
 
 Simulador::~Simulador() {
-    deleteHabitacao();
     delete winInfo;
     delete winConsole;
     delete winView;
-    delete winMenu;
 }

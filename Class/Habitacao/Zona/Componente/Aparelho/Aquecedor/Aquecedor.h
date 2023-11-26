@@ -1,5 +1,5 @@
-#ifndef POO_SIMULADOR_HABITACAO_AQUECEDOR_H
-#define POO_SIMULADOR_HABITACAO_AQUECEDOR_H
+#ifndef AQUECEDOR_H
+#define AQUECEDOR_H
 
 
 class Aquecedor {
@@ -7,4 +7,4 @@ class Aquecedor {
 };
 
 
-#endif //POO_SIMULADOR_HABITACAO_AQUECEDOR_H
+#endif //AQUECEDOR_H

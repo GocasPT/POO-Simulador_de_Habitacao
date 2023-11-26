@@ -1,5 +1,5 @@
-#ifndef POO_SIMULADOR_HABITACAO_REFRIGERADOR_H
-#define POO_SIMULADOR_HABITACAO_REFRIGERADOR_H
+#ifndef REFRIGERADOR_H
+#define REFRIGERADOR_H
 
 
 class Refrigerador {
@@ -7,4 +7,4 @@ class Refrigerador {
 };
 
 
-#endif //POO_SIMULADOR_HABITACAO_REFRIGERADOR_H
+#endif //REFRIGERADOR_H

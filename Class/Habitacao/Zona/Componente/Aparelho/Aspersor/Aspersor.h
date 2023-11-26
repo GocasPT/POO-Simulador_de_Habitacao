@@ -1,5 +1,5 @@
-#ifndef POO_SIMULADOR_HABITACAO_ASPERSOR_H
-#define POO_SIMULADOR_HABITACAO_ASPERSOR_H
+#ifndef ASPERSOR_H
+#define ASPERSOR_H
 
 
 class Aspersor {
@@ -7,4 +7,4 @@ class Aspersor {
 };
 
 
-#endif //POO_SIMULADOR_HABITACAO_ASPERSOR_H
+#endif //ASPERSOR_H

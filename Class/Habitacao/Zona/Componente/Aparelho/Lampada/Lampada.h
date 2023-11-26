@@ -1,5 +1,5 @@
-#ifndef POO_SIMULADOR_HABITACAO_LAMPADA_H
-#define POO_SIMULADOR_HABITACAO_LAMPADA_H
+#ifndef LAMPADA_H
+#define LAMPADA_H
 
 
 class Lampada {
@@ -7,4 +7,4 @@ class Lampada {
 };
 
 
-#endif //POO_SIMULADOR_HABITACAO_LAMPADA_H
+#endif //LAMPADA_H

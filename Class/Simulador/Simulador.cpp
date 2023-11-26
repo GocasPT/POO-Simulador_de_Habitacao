@@ -134,7 +134,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
     }
     argv.pop_back();
 
-    //TODO [EXTRA]: class comando (organização e melhor leitura #SpaguetiCode)
+    //TODO [EXTRA]: class comando (organização e melhor leitura)
 
     // Comando 'help'
     if (argv[0] == "help") {

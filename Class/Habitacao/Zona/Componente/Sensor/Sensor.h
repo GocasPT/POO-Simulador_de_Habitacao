@@ -1,20 +1,21 @@
-#ifndef POO_SIMULADOR_HABITACAO_SENSOR_H
-#define POO_SIMULADOR_HABITACAO_SENSOR_H
+#ifndef SENSOR_H
+#define SENSOR_H
 
-#include <string>
 #include "../../Propriedade/Propriedade.h"
 #include "../Componente.h"
 
-class Sensor : public Componente {
-    int id;
-    char letter;
-    //Propriedade &propriedade;
+class Sensor: public Componente {
+    const std::string name; // Nome do sensor
+    const char letter; // Letra do sensor
+    Propriedade &propriedade; // Propriedade que o sensor vai ler
 
 public:
-    Sensor(int id, char letter);
+    Sensor(int id, std::string name, int idZona, std::string propriedadeKey);
 
-    ~Sensor();
+    std::string getName() const; // Getter do nome
+    char getLetter() const; // Getter da letra
+
+    int getPropriedadeValue() const; // Getter do valor da propriedade
 };
 
-
-#endif //POO_SIMULADOR_HABITACAO_SENSOR_H
+#endif //SENSOR_H

@@ -1,5 +1,25 @@
 prox
-avanca 10
+avanca 5
+hnova 2 2
+hrem
+hnova 2 2
+znova 1 1
+znova 0 0
+zrem 1
 zlista
-zcomp 10
-sair
+zcomp 0
+zprops 0
+pmod 0 Temperatura 25
+cnovo 0 s test
+crem 0 s 0
+rnova 0 p0 regra 1 parm1
+pmuda 0 p0 comando
+rlista 0 p0
+rrem 0 p0 s1
+asoc 0 p0 a1
+ades 0 p0 a1
+acom 0 a0 comando
+psalva 0 p0 test
+prepoe test
+prem test
+plista

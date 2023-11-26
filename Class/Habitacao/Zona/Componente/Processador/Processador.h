@@ -1,20 +1,24 @@
-#ifndef POO_SIMULADOR_HABITACAO_PROCESSADOR_H
-#define POO_SIMULADOR_HABITACAO_PROCESSADOR_H
+#ifndef PROCESSADOR_H
+#define PROCESSADOR_H
 
-#include <string>
 #include <vector>
-#include "Regra/Regra.h"
+#include "../Regra/Regra.h"
+#include "../Aparelho/Aparelho.h"
 
-class Processador {
-    int id;
-    std::string comando;
-    std::vector<Regra> regras;
+class Processador: public Componente {
+    std::vector<Regra> regras; // Lista de regras
+    std::vector<Aparelho*> aparelhos; // Lista de aparelhos associados
 
 public:
-    Processador();
+    Processador(int id);
+
+    void addRegra(int id, Sensor &sensor); // Adiciona uma regra
+    void addAparelho(Aparelho& aparelho);   // Adiciona um aparelho
+
+    bool validateRegras(); // Valida as regras
+    void sendCommand(const std::string &command); // Envia um comando para os aparelhos
 
     ~Processador();
 };
 
-
-#endif //POO_SIMULADOR_HABITACAO_PROCESSADOR_H
+#endif //PROCESSADOR_H

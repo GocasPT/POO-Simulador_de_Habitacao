@@ -27,14 +27,29 @@ add_executable(${PROJECT_NAME} main.cpp
         Class/Habitacao/Zona/Componente/Aparelho/Lampada/Lampada.h
         Class/Habitacao/Zona/Componente/Aparelho/Refrigerador/Refrigerador.cpp
         Class/Habitacao/Zona/Componente/Aparelho/Refrigerador/Refrigerador.h
-        Class/Habitacao/Zona/Propriedade/Propriedade.cpp
-        Class/Habitacao/Zona/Propriedade/Propriedade.h
         Class/Habitacao/Zona/Componente/Sensor/Sensor.cpp
         Class/Habitacao/Zona/Componente/Sensor/Sensor.h
         Class/Habitacao/Zona/Componente/Processador/Processador.cpp
         Class/Habitacao/Zona/Componente/Processador/Processador.h
-        Class/Habitacao/Zona/Componente/Processador/Regra/Regra.cpp
-        Class/Habitacao/Zona/Componente/Processador/Regra/Regra.h)
+        Class/Habitacao/Zona/Componente/Regra/Regra.cpp
+        Class/Habitacao/Zona/Componente/Regra/Regra.h
+        Class/Habitacao/Zona/Propriedade/Propriedade.cpp
+        Class/Habitacao/Zona/Propriedade/Propriedade.h
+        Class/Habitacao/Zona/Propriedade/Propriedades.h
+        Class/Habitacao/Zona/Propriedade/Temperatura/Temperatura.cpp
+        Class/Habitacao/Zona/Propriedade/Temperatura/Temperatura.h
+        Class/Habitacao/Zona/Propriedade/Luz/Luz.cpp
+        Class/Habitacao/Zona/Propriedade/Luz/Luz.h
+        Class/Habitacao/Zona/Propriedade/Radiacao/Radiacao.cpp
+        Class/Habitacao/Zona/Propriedade/Radiacao/Radiacao.h
+        Class/Habitacao/Zona/Propriedade/Vibracao/Vibracao.cpp
+        Class/Habitacao/Zona/Propriedade/Vibracao/Vibracao.h
+        Class/Habitacao/Zona/Propriedade/Humidade/Humidade.cpp
+        Class/Habitacao/Zona/Propriedade/Humidade/Humidade.h
+        Class/Habitacao/Zona/Propriedade/Fumo/Fumo.cpp
+        Class/Habitacao/Zona/Propriedade/Fumo/Fumo.h
+        Class/Habitacao/Zona/Propriedade/Som/Som.cpp
+        Class/Habitacao/Zona/Propriedade/Som/Som.h)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_link_libraries(${PROJECT_NAME} C:/PDCurses-3.9/wincon/pdcurses.a)

@@ -1,14 +1,7 @@
+#include <sstream>
 #include "Componente.h"
 
-Componente::Componente(int id, ComponentType type) {
-    this->id = id;
-    this->type = type;
-}
+Componente::Componente(char c, int id): letterID(c), id(id) {}
 
 int Componente::getId() const { return id; }
-
-ComponentType Componente::getType() const { return type; }
-
-Componente::~Componente() {
-
-}
+char Componente::getLetterID() const { return letterID; }

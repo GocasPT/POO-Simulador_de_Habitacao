@@ -3,8 +3,8 @@
 
 #include <sstream>
 
-#include "../../Lib/Terminal/Terminal.h"
 #include "../Habitacao/Habitacao.h"
+#include "../../Lib/Terminal/Terminal.h"
 
 class Simulador {
     term::Terminal &term;   // Referencia para o terminal

@@ -1,20 +1,29 @@
-#ifndef POO_SIMULADOR_HABITACAO_APARELHO_H
-#define POO_SIMULADOR_HABITACAO_APARELHO_H
+#ifndef APARELHO_H
+#define APARELHO_H
 
-#include <vector>
+#include <map>
 #include "../../Propriedade/Propriedade.h"
+#include "../Componente.h"
 
-class Aparelho {
-    int id;
-    char letra;
-    bool estado;
-    std::vector<Propriedade> propriedades;
+//TODO [Meta 2]: Virutalizar a class (hirearquia)
+class Aparelho : public Componente {
+protected:
+    const std::string name; // Nome do aparelho
+    const char letter; // Letra do aparelho
+    bool state = false; // Estado do aparelho
+    const std::map<std::string, Propriedade *> propriedades; // Lista de propriedades da zona que o aparelho vai modificar
+    int instantCount = 0; // Contador de instantes
 
 public:
-    Aparelho();
+    Aparelho(int id, char letter, std::string name, std::map<std::string, Propriedade *> propriedades);
 
-    ~Aparelho();
+    std::string getName() const; // Getter do nome
+    char getLetter() const; // Getter da letra
+    bool getState() const; // Getter do estado
+
+    void readCommand(const std::string &command); // Lê um comando
+    void toggleState(); // Altera o estado do aparelho
+    void update(); // Atualiza as propriedades da zona
 };
 
-
-#endif //POO_SIMULADOR_HABITACAO_APARELHO_H
+#endif //APARELHO_H

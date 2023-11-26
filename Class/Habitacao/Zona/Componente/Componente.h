@@ -1,25 +1,20 @@
 #ifndef COMPONENTES_H
 #define COMPONENTES_H
 
-enum ComponentType {
-    PROCESSADOR,
-    APARELHO,
-    SENSOR
-};
+#include <string>
 
+//TODO [Meta 2]: Virutalizar a class (hirearquia)
 class Componente {
 protected:
-    int id;
-    ComponentType type;
+    const char letterID; // Letra que identifica o componente
+    const int id; // ID do componente
+
 
 public:
-    Componente(int id, ComponentType type);
+    Componente(char c, int id);
 
-    int getId() const;
-
-    ComponentType getType() const;
-
-    ~Componente();
+    int getId() const; // Getter do id (número)
+    char getLetterID() const; // Getter da letra do id
 };
 
 #endif //COMPONENTES_H

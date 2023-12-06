@@ -1,0 +1,12 @@
+hnova 2 2
+znova 1 1
+zprops 0
+pmod 0 Temperatura 100
+pmod 0 Luz 200
+pmod 0 Radiacao 5
+pmod 0 Vibracao 1
+pmod 0 Humidade 200
+pmod 0 Fumo -10
+pmod 0 Som 45
+zprops 0
+pmod 0 Temperatura -300

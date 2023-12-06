@@ -134,8 +134,6 @@ bool Simulador::validateCommand(std::istringstream &comando) {
     }
     argv.pop_back();
 
-    //TODO [EXTRA]: class comando (organização e melhor leitura)
-
     // Comando 'help'
     if (argv[0] == "help") {
         if (argv.size() == 1) {
@@ -353,6 +351,8 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         } else {
             *winInfo << "\nComando 'zrem' invalido - zrem <ID zona>\n";
         }
+
+        //TODO: verificar se funciona
     } else if (argv[0] == "zlista") {
         if (argv.size() == 1) {
             *winInfo << "\n 'zlista'\n";
@@ -402,6 +402,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         }
 
         // Comandos para as zonas
+        //TODO: verificar se funciona
     } else if (argv[0] == "zcomp") {
         if (argv.size() == 2 && isNumber(argv[1])) {
             *winInfo << "\nComando 'zcomp' com argumento " << argv[1] << "\n";
@@ -456,13 +457,12 @@ bool Simulador::validateCommand(std::istringstream &comando) {
             }
 
             *winInfo << "\nPropriedades da zona '" << zona->getId() << "':\n";
-            //TODO [Meta 2]: Virtaulizar a classe propriedade
-            /*
+
             for (const auto &propriedade: zona->getPropriedades()) {
                 *winInfo << "Propriedade '" << propriedade->getName() << "'\n";
                 *winInfo << "Valor: " << propriedade->getValue() << "\n\n";
             }
-            */
+
             return true;
         } else {
             *winInfo << "\nComando 'zprops' invalido - zprops <ID zona>\n";
@@ -479,11 +479,17 @@ bool Simulador::validateCommand(std::istringstream &comando) {
                 return true;
             }
 
+            if (!zona->setPropriedade(argv[2], std::stoi(argv[3]))) {
+                *winInfo << "\nPropriedade nao encontrada!\n";
+                return true;
+            }
+
             return true;
         } else {
             *winInfo << "\nComando 'pmod' invalido - pmod <ID zona> <name> <value>\n";
         }
         //TODO: verificar os argumentos
+        //TODO: verificar se funciona
     } else if (argv[0] == "cnovo") {
         if (argv.size() == 4 && isNumber(argv[1]) && (argv[2] == "s" || argv[2] == "p" || argv[2] == "a") &&
             isNumber(argv[3])) {
@@ -506,6 +512,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         } else {
             *winInfo << "\nComando 'cnovo' invalido - cnovo <ID zona> <s | p | a> <tipo | comando>\n";
         }
+        //TODO: verificar se funciona
     } else if (argv[0] == "crem") {
         if (argv.size() == 4 && isNumber(argv[1]) && (argv[2] == "s" || argv[2] == "p" || argv[2] == "a") &&
             isNumber(argv[3])) {
@@ -525,6 +532,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         }
 
         // Comandos para os processadores
+        //TODO: verificar se funciona
     } else if (argv[0] == "rnova") {
         if (argv.size() >= 6 && isNumber(argv[1]) && isNumber(argv[2]) && isNumber(argv[3]) && isNumber(argv[4]) &&
             isNumber(argv[5])) {
@@ -544,6 +552,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
             *winInfo
                     << "\nComando 'rnova' invalido - rnova <ID zona> <ID proc. regras> <regra> <ID sensor> [param1] [param2] [...]\n";
         }
+        //TODO: verificar se funciona
     } else if (argv[0] == "pmuda") {
         if (argv.size() == 4 && isNumber(argv[1]) && isNumber(argv[2]) && !isNumber(argv[3])) {
             *winInfo << "\nComando 'pmuda' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
@@ -560,6 +569,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         } else {
             *winInfo << "\nComando 'pmuda' invalido - pmuda <ID zona> <ID proc. regras> <novo comando>\n";
         }
+        //TODO: verificar se funciona
     } else if (argv[0] == "rlista") {
         if (argv.size() == 3 && isNumber(argv[1]) && isNumber(argv[2])) {
             *winInfo << "\nComando 'rlista' com argumentos [" << argv[1] << " " << argv[2] << "\n";
@@ -581,6 +591,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         } else {
             *winInfo << "\nComando 'rlista' invalido - rlista <ID zona> <ID proc. regras>\n";
         }
+        //TODO: verificar se funciona
     } else if (argv[0] == "rrem") {
         if (argv.size() == 4 && isNumber(argv[1]) && isNumber(argv[2]) && isNumber(argv[3])) {
             *winInfo << "\nComando 'rrem' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
@@ -597,6 +608,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         } else {
             *winInfo << "\nComando 'rrem' invalido - rrem <ID zona> <ID proc. regras> <ID regra>\n";
         }
+        //TODO: verificar se funciona
     } else if (argv[0] == "asoc") {
         if (argv.size() == 4 && isNumber(argv[1]) && isNumber(argv[2]) && isNumber(argv[3])) {
             *winInfo << "\nComando 'asoc' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
@@ -614,6 +626,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         } else {
             *winInfo << "\nComando 'asoc' invalido - asoc <ID zona> <ID proc. regras> <ID aparelho>\n";
         }
+        //TODO: verificar se funciona
     } else if (argv[0] == "ades") {
         if (argv.size() == 4 && isNumber(argv[1]) && isNumber(argv[2]) && isNumber(argv[3])) {
             *winInfo << "\nComando 'ades' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
@@ -632,6 +645,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         }
 
         // Comandos para os aparelhos
+        //TODO: verificar se funciona
     } else if (argv[0] == "acom") {
         if (argv.size() == 4 && isNumber(argv[1]) && isNumber(argv[2]) && !isNumber(argv[3])) {
             *winInfo << "\nComando 'acom' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
@@ -650,6 +664,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         }
 
         // Comandos para copiar/recuperar dos processadores
+        //TODO: verificar se funciona
     } else if (argv[0] == "psalva") {
         if (argv.size() == 4 && isNumber(argv[1]) && isNumber(argv[2]) && !isNumber(argv[3])) {
             *winInfo << "\nComando 'psalva' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
@@ -666,6 +681,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         } else {
             *winInfo << "\nComando 'psalva' invalido - psalva <ID zona> <ID proc. regras> <name>\n";
         }
+        //TODO: verificar se funciona
     } else if (argv[0] == "prepoe") {
         if (argv.size() == 2 && !isNumber(argv[1])) {
             *winInfo << "Comando 'prepoe' " << argv[1] << "\n";
@@ -673,6 +689,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         } else {
             *winInfo << "\nComando 'prepoe' invalido: Nao tem argumentos\n";
         }
+        //TODO: verificar se funciona
     } else if (argv[0] == "prem") {
         if (argv.size() == 2 && !isNumber(argv[1])) {
             *winInfo << "\nComando 'prem' com argumento " << argv[1] << "\n";
@@ -680,6 +697,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         } else {
             *winInfo << "\nComando 'prem' invalido - prem <name>\n";
         }
+        //TODO: verificar se funciona
     } else if (argv[0] == "plista") {
         if (argv.size() == 1) {
             *winInfo << "\nComando 'plista'\n";
@@ -689,6 +707,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         }
 
         // Comandos para o simulador
+        //TODO: verificar se funciona
     } else if (argv[0] == "exec") {
         if (argv.size() == 2 && !isNumber(argv[1])) {
             *winInfo << "\nComando 'exec' com argumento " << argv[1] << "\n";
@@ -699,6 +718,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         } else {
             *winInfo << "\nComando 'exec' invalido - exec <name de ficheiro>\n";
         }
+        //TODO: verificar se funciona
     } else if (argv[0] == "sair") {
         if (argv.size() == 1) {
             *winInfo << "\nComando 'sair'\n";
@@ -776,6 +796,7 @@ void Simulador::deleteHabitacao() {
 }
 
 Simulador::~Simulador() {
+    deleteHabitacao();
     delete winInfo;
     delete winConsole;
     delete winView;

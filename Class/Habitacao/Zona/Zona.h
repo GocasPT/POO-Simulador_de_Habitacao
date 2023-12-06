@@ -27,6 +27,8 @@ public:
     bool addComponente(const std::string &id, char type, char rule); // Adiciona um componente Regra
     bool removeComponente(const std::string &id); // Remove um componente
 
+    bool setPropriedade(const std::string &key, int value); // Altera uma propriedade
+
     ~Zona();
 };
 

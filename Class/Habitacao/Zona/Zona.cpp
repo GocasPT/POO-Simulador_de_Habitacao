@@ -68,6 +68,15 @@ bool Zona::removeComponente(const std::string &id) {
     return false;
 }
 
+bool Zona::setPropriedade(const std::string &key, int value) {
+    auto obj = propriedades.find(key);
+    if (obj != propriedades.end()) {
+        obj->second->setValor(value);
+        return true;
+    } else
+        return false;
+}
+
 Zona::~Zona() {
     for (const auto &propriedade: propriedades)
         delete propriedade.second;

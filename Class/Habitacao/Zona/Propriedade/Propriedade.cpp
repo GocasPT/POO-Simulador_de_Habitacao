@@ -12,9 +12,9 @@ int Propriedade::getValue() const { return value; }
 
 void Propriedade::setValor(int value) {
     if (value < minValue)
-        value = minValue;
+        this->value = minValue;
     else if (isPercentage && value > 100)
-        value = 100;
+        this->value = 100;
     else
         this->value = value;
 }

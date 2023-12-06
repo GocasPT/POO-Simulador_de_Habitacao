@@ -4,11 +4,11 @@
 #include <string>
 
 //TODO [Meta 2]: Virutalizar a class (hirearquia)
+//TODO: Mudar string id para int id
 class Componente {
 protected:
     const char letterID; // Letra que identifica o componente
     const int id; // ID do componente
-
 
 public:
     Componente(char c, int id);

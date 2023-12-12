@@ -29,6 +29,11 @@ add_executable(${PROJECT_NAME} main.cpp
         Class/Habitacao/Zona/Componente/Aparelho/Refrigerador/Refrigerador.h
         Class/Habitacao/Zona/Componente/Sensor/Sensor.cpp
         Class/Habitacao/Zona/Componente/Sensor/Sensor.h
+        Class/Habitacao/Zona/Componente/Sensor/SensorFactory.cpp
+        Class/Habitacao/Zona/Componente/Sensor/SensorFactory.h
+        Class/Habitacao/Zona/Componente/Sensor/Sensores.h
+        Class/Habitacao/Zona/Componente/Sensor/SensorTemperatura/SensorTemperatura.cpp
+        Class/Habitacao/Zona/Componente/Sensor/SensorTemperatura/SensorTemperatura.h
         Class/Habitacao/Zona/Componente/Processador/Processador.cpp
         Class/Habitacao/Zona/Componente/Processador/Processador.h
         Class/Habitacao/Zona/Componente/Regra/Regra.cpp
@@ -49,7 +54,19 @@ add_executable(${PROJECT_NAME} main.cpp
         Class/Habitacao/Zona/Propriedade/Fumo/Fumo.cpp
         Class/Habitacao/Zona/Propriedade/Fumo/Fumo.h
         Class/Habitacao/Zona/Propriedade/Som/Som.cpp
-        Class/Habitacao/Zona/Propriedade/Som/Som.h)
+        Class/Habitacao/Zona/Propriedade/Som/Som.h
+        Class/Habitacao/Zona/Componente/Sensor/SensorSom/SensorSom.cpp
+        Class/Habitacao/Zona/Componente/Sensor/SensorSom/SensorSom.h
+        Class/Habitacao/Zona/Componente/Sensor/SensorRadiacao/SensorRadiacao.cpp
+        Class/Habitacao/Zona/Componente/Sensor/SensorRadiacao/SensorRadiacao.h
+        Class/Habitacao/Zona/Componente/Sensor/SensorMovimento/SensorMovimento.cpp
+        Class/Habitacao/Zona/Componente/Sensor/SensorMovimento/SensorMovimento.h
+        Class/Habitacao/Zona/Componente/Sensor/SensorLuminosidade/SensorLuminosidade.cpp
+        Class/Habitacao/Zona/Componente/Sensor/SensorLuminosidade/SensorLuminosidade.h
+        Class/Habitacao/Zona/Componente/Sensor/SensorHumidade/SensorHumidade.cpp
+        Class/Habitacao/Zona/Componente/Sensor/SensorHumidade/SensorHumidade.h
+        Class/Habitacao/Zona/Componente/Sensor/SensorFumo/SensorFumo.cpp
+        Class/Habitacao/Zona/Componente/Sensor/SensorFumo/SensorFumo.h)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_link_libraries(${PROJECT_NAME} C:/PDCurses-3.9/wincon/pdcurses.a)

@@ -3,8 +3,6 @@
 
 #include "../Propriedade.h"
 
-#define TEMPERATURA "Temperatura"
-
 class Temperatura : public Propriedade {
 public:
     Temperatura();

@@ -2,7 +2,8 @@
 
 #include <utility>
 
-Aparelho::Aparelho(int id, char letter, std::string name, std::map<std::string, Propriedade *> propriedades) : Componente('a', id), letter(letter), name(std::move(name)) {
+Aparelho::Aparelho(int id, char letter, std::string name, std::map<std::string, Propriedade *> propriedades)
+        : Componente('a', id), letter(letter), name(std::move(name)) {
     //TODO: aparelho recebe propriedades (referencia ou ponteiro) [PROPRIEDADES EXISTE FORA DA CLASSE]
     //this->propriedades = propriedades;
 }

@@ -6,7 +6,7 @@
 #include "../Sensor/Sensor.h"
 #include "../../Propriedade/Propriedade.h"
 
-class Regra: public Componente {
+class Regra : public Componente {
     Sensor &sensor; // Sensor que a regra vai ler
 
 public:

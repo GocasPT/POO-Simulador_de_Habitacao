@@ -19,8 +19,8 @@ public:
     int getId() const; // Getter do id
     std::vector<Propriedade *> getPropriedades() const; // Getter das propriedades
     std::vector<Componente> getComponentes() const; // Getter dos componentes
-    const Propriedade * getPropriedade(const std::string& key) const; // Getter de uma propriedade
-    const Componente * getComponente(const std::string& id) const; // Getter de um componente
+    Propriedade *getPropriedade(const std::string &key) const; // Getter de uma propriedade
+    const Componente *getComponente(const std::string &id) const; // Getter de um componente
 
     bool addComponente(const std::string &id); // Adiciona um componente Processador
     bool addComponente(const std::string &id, char type); // Adiciona um componente Sensor ou Aparlho

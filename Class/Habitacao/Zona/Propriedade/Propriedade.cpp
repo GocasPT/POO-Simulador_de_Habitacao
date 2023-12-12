@@ -8,6 +8,7 @@ Propriedade::Propriedade(const std::string &name, const std::string &unit, int m
 }
 
 std::string Propriedade::getName() const { return name; }
+
 int Propriedade::getValue() const { return value; }
 
 void Propriedade::setValor(int value) {

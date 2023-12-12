@@ -1,3 +1,3 @@
 #include "Som.h"
 
-Som::Som() : Propriedade(SOM, "Decibéis ", 0, false) {}
+Som::Som() : Propriedade(SOM_STR, "Decibéis ", 0, false) {}

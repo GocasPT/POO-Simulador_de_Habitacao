@@ -1,3 +1,3 @@
 #include "Humidade.h"
 
-Humidade::Humidade() : Propriedade(HUMIDADE, "%", 0, true) {}
+Humidade::Humidade() : Propriedade(HUMIDADE_STR, "%", 0, true) {}

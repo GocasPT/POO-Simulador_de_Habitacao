@@ -3,8 +3,6 @@
 
 #include "../Propriedade.h"
 
-#define SOM "Som"
-
 class Som : public Propriedade {
 public:
     Som();

@@ -3,8 +3,6 @@
 
 #include "../Propriedade.h"
 
-#define HUMIDADE "Humidade"
-
 class Humidade : public Propriedade {
 public:
     Humidade();

@@ -1,3 +1,3 @@
 #include "Vibracao.h"
 
-Vibracao::Vibracao() : Propriedade(VIBRACAO, "Hertz", 0, false) {}
+Vibracao::Vibracao() : Propriedade(VIBRACAO_STR, "Hertz", 0, false) {}

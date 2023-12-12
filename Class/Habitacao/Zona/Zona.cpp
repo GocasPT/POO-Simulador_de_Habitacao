@@ -5,19 +5,19 @@ Zona::Zona(int id) : id(id) {
     idCounter = 0;
 
     // Criação das propriedades de ambiente e adição ao map
-    propriedades[TEMPERATURA] = new Temperatura();
-    propriedades[LUZ] = new Luz();
-    propriedades[RADIACAO] = new Radiacao();
-    propriedades[VIBRACAO] = new Vibracao();
-    propriedades[HUMIDADE] = new Humidade();
-    propriedades[FUMO] = new Fumo();
-    propriedades[SOM] = new Som();
+    propriedades[TEMPERATURA_STR] = new Temperatura();
+    propriedades[LUZ_STR] = new Luz();
+    propriedades[RADIACAO_STR] = new Radiacao();
+    propriedades[VIBRACAO_STR] = new Vibracao();
+    propriedades[HUMIDADE_STR] = new Humidade();
+    propriedades[FUMO_STR] = new Fumo();
+    propriedades[SOM_STR] = new Som();
 }
 
 int Zona::getId() const { return id; }
 
 std::vector<Propriedade *> Zona::getPropriedades() const {
-    std::vector<Propriedade *> vectorReturn;
+    std::vector < Propriedade * > vectorReturn;
 
     for (const auto &propriedade: propriedades)
         vectorReturn.push_back(propriedade.second);
@@ -25,8 +25,8 @@ std::vector<Propriedade *> Zona::getPropriedades() const {
     return vectorReturn;
 }
 
-std::vector<Componente> Zona::getComponentes() const {
-    std::vector<Componente> vectorReturn;
+std::vector <Componente> Zona::getComponentes() const {
+    std::vector <Componente> vectorReturn;
 
     for (const auto &componente: componentes)
         vectorReturn.push_back(componente.second);
@@ -34,7 +34,7 @@ std::vector<Componente> Zona::getComponentes() const {
     return vectorReturn;
 }
 
-const Propriedade * Zona::getPropriedade(const std::string &key) const {
+Propriedade *Zona::getPropriedade(const std::string &key) const {
     auto obj = propriedades.find(key);
     if (obj != propriedades.end())
         return obj->second;
@@ -42,12 +42,11 @@ const Propriedade * Zona::getPropriedade(const std::string &key) const {
         return nullptr;
 }
 
-const Componente * Zona::getComponente(const std::string &id) const {
+const Componente *Zona::getComponente(const std::string &id) const {
     auto obj = componentes.find(id);
     if (obj != componentes.end()) {
         return &obj->second;
-    }
-    else
+    } else
         return nullptr;
 }
 

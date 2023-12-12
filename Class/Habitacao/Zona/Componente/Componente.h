@@ -3,6 +3,14 @@
 
 #include <string>
 
+//TODO: Verirficar se é necessário ou sse fica aqui
+enum class TipoComponente {
+    SENSOR,
+    APARELHO,
+    PROCESSADOR,
+    REGRA
+};
+
 //TODO [Meta 2]: Virutalizar a class (hirearquia)
 //TODO: Mudar string id para int id
 class Componente {

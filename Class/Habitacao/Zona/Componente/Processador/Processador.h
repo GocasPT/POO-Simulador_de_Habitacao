@@ -5,15 +5,15 @@
 #include "../Regra/Regra.h"
 #include "../Aparelho/Aparelho.h"
 
-class Processador: public Componente {
+class Processador : public Componente {
     std::vector<Regra> regras; // Lista de regras
-    std::vector<Aparelho*> aparelhos; // Lista de aparelhos associados
+    std::vector<Aparelho *> aparelhos; // Lista de aparelhos associados
 
 public:
     Processador(int id);
 
     void addRegra(int id, Sensor &sensor); // Adiciona uma regra
-    void addAparelho(Aparelho& aparelho);   // Adiciona um aparelho
+    void addAparelho(Aparelho &aparelho);   // Adiciona um aparelho
 
     bool validateRegras(); // Valida as regras
     void sendCommand(const std::string &command); // Envia um comando para os aparelhos

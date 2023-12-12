@@ -3,8 +3,6 @@
 
 #include "../Propriedade.h"
 
-#define LUZ "Luz"
-
 class Luz : public Propriedade {
 public:
     Luz();

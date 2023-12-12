@@ -3,8 +3,6 @@
 
 #include "../Propriedade.h"
 
-#define RADIACAO "Radiacao"
-
 class Radiacao : public Propriedade {
 public:
     Radiacao();

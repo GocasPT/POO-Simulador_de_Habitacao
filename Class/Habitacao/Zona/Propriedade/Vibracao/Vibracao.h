@@ -3,8 +3,6 @@
 
 #include "../Propriedade.h"
 
-#define VIBRACAO "Vibracao"
-
 class Vibracao : public Propriedade {
 public:
     Vibracao();

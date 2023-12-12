@@ -1,3 +1,3 @@
 #include "Fumo.h"
 
-Fumo::Fumo() : Propriedade(FUMO, "%", 0, true) {}
+Fumo::Fumo() : Propriedade(FUMO_STR, "%", 0, true) {}

@@ -1,5 +1,6 @@
 #include "Simulador.h"
 #include "../../Lib/utils/utils.h"
+#include "../Habitacao/Zona/Componente/Sensor/SensorFactory.h"
 
 #include <string>
 #include <vector>
@@ -492,7 +493,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         //TODO: verificar se funciona
     } else if (argv[0] == "cnovo") {
         if (argv.size() == 4 && isNumber(argv[1]) && (argv[2] == "s" || argv[2] == "p" || argv[2] == "a") &&
-            isNumber(argv[3])) {
+            !isNumber(argv[3])) {
             *winInfo << "\nComando 'cnovo' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
 
             if (!checkHabitacao()) return true;
@@ -503,10 +504,39 @@ bool Simulador::validateCommand(std::istringstream &comando) {
                 return true;
             }
 
-            //falta tipo|comando ??
-            //
-            //
-            //
+
+            TipoComponente tipoComponente;
+
+            switch (argv[2][0]) {
+                case 's':
+                    *winInfo << "\nAdicionar Sensor...\n";
+                    tipoComponente = TipoComponente::SENSOR;
+                    break;
+                case 'p':
+                    *winInfo << "\nAdicionar Processador...\n";
+                    tipoComponente = TipoComponente::PROCESSADOR;
+                    break;
+                case 'a':
+                    *winInfo << "\nAdicionar Aparelho...\n";
+                    tipoComponente = TipoComponente::APARELHO;
+                    break;
+            }
+
+
+
+            //TODO: identificar tipo/comando
+            switch (tipoComponente) {
+                case TipoComponente::SENSOR:
+                    *winInfo << "\nAdicionar Sensor...\n";
+                    break;
+                case TipoComponente::PROCESSADOR:
+                    *winInfo << "\nAdicionar Processador...\n";
+                    break;
+                case TipoComponente::APARELHO:
+                    *winInfo << "\nAdicionar Aparelho...\n";
+                    break;
+            }
+
 
             return true;
         } else {

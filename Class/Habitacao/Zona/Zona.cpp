@@ -34,7 +34,7 @@ std::vector <Componente> Zona::getComponentes() const {
     return vectorReturn;
 }
 
-Propriedade *Zona::getPropriedade(const std::string &key) const {
+Propriedade *Zona::getPropriedade(const string &key) const {
     auto obj = propriedades.find(key);
     if (obj != propriedades.end())
         return obj->second;
@@ -42,7 +42,7 @@ Propriedade *Zona::getPropriedade(const std::string &key) const {
         return nullptr;
 }
 
-const Componente *Zona::getComponente(const std::string &id) const {
+const Componente *Zona::getComponente(const string &id) const {
     auto obj = componentes.find(id);
     if (obj != componentes.end()) {
         return &obj->second;
@@ -51,23 +51,23 @@ const Componente *Zona::getComponente(const std::string &id) const {
 }
 
 //TODO [Meta 2]: funções para addicionar e remover componentes
-bool Zona::addComponente(const std::string &id) {
+bool Zona::addComponente(const string &id) {
     return false;
 }
 
-bool Zona::addComponente(const std::string &id, char type) {
+bool Zona::addComponente(const string &id, char type) {
     return false;
 }
 
-bool Zona::addComponente(const std::string &id, char type, char rule) {
+bool Zona::addComponente(const string &id, char type, char rule) {
     return false;
 }
 
-bool Zona::removeComponente(const std::string &id) {
+bool Zona::removeComponente(const string &id) {
     return false;
 }
 
-bool Zona::setPropriedade(const std::string &key, int value) {
+bool Zona::setPropriedade(const string &key, int value) {
     auto obj = propriedades.find(key);
     if (obj != propriedades.end()) {
         obj->second->setValor(value);

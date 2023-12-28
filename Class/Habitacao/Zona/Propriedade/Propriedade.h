@@ -11,19 +11,21 @@
 
 #include <string>
 
+using std::string;
+
 //TODO [Meta 2]: Virutalizar a class (hirearquia)
 class Propriedade {
 protected:
-    std::string name;
+    string name;
     int value;
-    const std::string unit;
+    const string unit;
     const int minValue;
     const bool isPercentage;
 
 public:
-    Propriedade(const std::string &name, const std::string &unit, int minValue, bool isPercentage);
+    Propriedade(const string &name, const string &unit, int minValue, bool isPercentage);
 
-    std::string getName() const;
+    string getName() const;
 
     int getValue() const;
 

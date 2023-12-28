@@ -1,10 +1,10 @@
 #include "Sensor.h"
 
-Sensor::Sensor(int id, std::string name, char letter, Propriedade &propriedade) : Componente('s', id), name(name),
+Sensor::Sensor(int id, string name, char letter, Propriedade &propriedade) : Componente('s', id), name(name),
                                                                                   letter(letter),
                                                                                   propriedade(propriedade) {}
 
-std::string Sensor::getName() const { return this->name; }
+string Sensor::getName() const { return this->name; }
 
 char Sensor::getLetter() const { return this->letter; }
 

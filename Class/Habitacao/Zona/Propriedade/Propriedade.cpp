@@ -1,13 +1,13 @@
 #include "Propriedade.h"
 
-Propriedade::Propriedade(const std::string &name, const std::string &unit, int minValue, bool isPercentage)
+Propriedade::Propriedade(const string &name, const string &unit, int minValue, bool isPercentage)
         : unit(unit), minValue(minValue),
           isPercentage(isPercentage) {
     this->name = name;
     value = 0;
 }
 
-std::string Propriedade::getName() const { return name; }
+string Propriedade::getName() const { return name; }
 
 int Propriedade::getValue() const { return value; }
 

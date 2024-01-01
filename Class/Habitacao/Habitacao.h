@@ -2,7 +2,7 @@
 #define HABITACAO_H
 
 
-#include "Zona/Zona.h"
+#include "../Zona/Zona.h"
 
 class Habitacao {
     int wide, height;

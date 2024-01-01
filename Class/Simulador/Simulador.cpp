@@ -1,6 +1,7 @@
 #include "Simulador.h"
 #include "../../Lib/utils/utils.h"
-#include "../Habitacao/Zona/Componente/Sensor/SensorFactory.h"
+#include "../Componente/Sensor/SensorFactory.h"
+#include "../Componente/Aparelho/AparelhoFactory.h"
 
 #include <string>
 #include <vector>
@@ -9,7 +10,7 @@
 
 #define MENU_WIDTH 75
 #define MENU_HEIGHT 20
-#define VIEW_WIDTH 150 // 180 antes
+#define VIEW_WIDTH 150
 #define VIEW_HEIGHT 55
 #define CONSOLE_HEIGHT 3
 #define INFO_WIDTH 50
@@ -113,8 +114,8 @@ void Simulador::run() {
 void Simulador::next() {
     if (habitacao == nullptr) return;
 
-    for(int i = 0; i < habitacao->getHeight(); i++)
-        for(int j = 0; j < habitacao->getWide(); j++) {
+    for (int i = 0; i < habitacao->getHeight(); i++)
+        for (int j = 0; j < habitacao->getWide(); j++) {
             Zona &zona = *habitacao->getZona(i, j);
             zona.update();
         }
@@ -127,14 +128,38 @@ void Simulador::updateView() {
         for (int j = 0; j < habitacao->getWide(); j++) {
             winZones[i][j]->clear();
             if (habitacao->getZona(i, j) != nullptr) {
+                ostringstream oss, ap, se, pr, re;
+
                 Zona &zona = *habitacao->getZona(i, j);
-                *winZones[i][j] << zona.getId() << '\n';
-                //TODO: updateView
+                oss << "Zona Id: " << zona.getId() << "\n";
+
+                for (const auto &componente: zona.getComponentes()) {
+                    switch (componente->getLetterID()) {
+                        case 'a':
+                            ap << componente->getId() << " ";
+                            break;
+                        case 's':
+                            se << componente->getId() << " ";
+                            break;
+                        case 'p':
+                            pr << componente->getId() << " ";
+                            for (const auto &regra: ((Processador *) componente)->getRegras())
+                                re << regra->getId() << " ";
+                            break;
+                    }
+                }
+
+                oss << "Aparelhos: " << ap.str() << "\n\n"
+                    << "Sensores: " << se.str() << "\n\n"
+                    << "Processadores: " << pr.str() << "\n\n"
+                    << "Regras: " << re.str() << "\n\n";
+
+                *winZones[i][j] << oss.str();
             }
         }
 }
 
-bool Simulador::validateCommand(::istringstream &comando) {
+bool Simulador::validateCommand(istringstream &comando) {
     vector<string> argv;
 
     while (comando) {
@@ -523,7 +548,8 @@ bool Simulador::validateCommand(::istringstream &comando) {
 
             switch (tipoComponente) {
                 case TipoComponente::SENSOR:
-                    if (zona->addComponente(SensorFactory::createSensor(SensorFactory::stringToTipoSensor(argv[3]), id, *zona)))
+                    if (zona->addComponente(
+                            SensorFactory::createSensor(SensorFactory::stringToTipoSensor(argv[3]), id, *zona)))
                         *winInfo << "\nFoi adicionado um sensor\n" << zona->getComponente(id)->toString() << '\n';
                     break;
                 case TipoComponente::PROCESSADOR:
@@ -531,7 +557,9 @@ bool Simulador::validateCommand(::istringstream &comando) {
                         *winInfo << "\nFoi adicionado um processador\n" << zona->getComponente(id)->toString() << '\n';
                     break;
                 case TipoComponente::APARELHO:
-                    if (zona->addComponente(AparelhoFactory::createAparelho(AparelhoFactory::stringToTipoeAparelho(argv[3]), id, *zona)))
+                    if (zona->addComponente(
+                            AparelhoFactory::createAparelho(AparelhoFactory::stringToTipoeAparelho(argv[3]), id,
+                                                            *zona)))
                         *winInfo << "\nFoi adicionado um aparelho\n" << zona->getComponente(id)->toString() << '\n';
                     break;
                 default:
@@ -564,7 +592,8 @@ bool Simulador::validateCommand(::istringstream &comando) {
 
         // Comandos para os processadores
     } else if (argv[0] == "rnova") {
-        if (argv.size() >= 6 && argv.size() <= 7 && isNumber(argv[1]) && isNumber(argv[2]) && !isNumber(argv[3]) && isNumber(argv[4]) &&
+        if (argv.size() >= 6 && argv.size() <= 7 && isNumber(argv[1]) && isNumber(argv[2]) && !isNumber(argv[3]) &&
+            isNumber(argv[4]) &&
             isNumber(argv[5])) {
             *winInfo << "\nComando 'rnova' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << " "
                      << argv[4] << " " << argv[5] << "\n";
@@ -589,7 +618,7 @@ bool Simulador::validateCommand(::istringstream &comando) {
                 return true;
             }
 
-            Regra* regra;
+            Regra *regra;
 
             if (argv.size() == 6)
                 regra = new Regra(idCount++, Regra::stringToOperacao(argv[3]), sensor, stoi(argv[5]));
@@ -632,8 +661,8 @@ bool Simulador::validateCommand(::istringstream &comando) {
 
             processador->setComando(argv[3]);
             *winInfo << "\nComando alterado com sucesso!\n"
-                        << processador->toString()
-                        << "\n";
+                     << processador->toString()
+                     << "\n";
 
             return true;
         } else {
@@ -651,7 +680,7 @@ bool Simulador::validateCommand(::istringstream &comando) {
                 return true;
             }
 
-            auto processador = (Processador*) zona->getComponente(stoi(argv[2]));
+            auto processador = (Processador *) zona->getComponente(stoi(argv[2]));
             if (!processador) {
                 *winInfo << "\nProcessador nao encontrado!\n";
                 return true;
@@ -687,8 +716,8 @@ bool Simulador::validateCommand(::istringstream &comando) {
 
             processador->removeRegra(stoi(argv[3]));
             *winInfo << "\nRegra removida com sucesso!\n"
-                    << processador->toString()
-                    << '\n';
+                     << processador->toString()
+                     << '\n';
 
             return true;
         } else {
@@ -753,8 +782,8 @@ bool Simulador::validateCommand(::istringstream &comando) {
 
             processador->removeAparelho(aparelho->getNumId());
             *winInfo << "\nAparelho desassociado com sucesso!\n"
-                    << processador->toString()
-                    << "\n";
+                     << processador->toString()
+                     << "\n";
 
             return true;
         } else {
@@ -782,7 +811,7 @@ bool Simulador::validateCommand(::istringstream &comando) {
 
             aparelho->readCommand(argv[3]);
             *winInfo << "\nComando executado com sucesso!\n"
-                    << aparelho->toString()
+                     << aparelho->toString()
                      << "\n";
 
             return true;
@@ -803,9 +832,9 @@ bool Simulador::validateCommand(::istringstream &comando) {
             auto processador = (Processador *) zona->getComponente(stoi(argv[2]));
 
             *winInfo << "\nProcessador salvo com sucesso!\n"
-                    << zona->toString()
-                    << processador->toString()
-                    << "\n";
+                     << zona->toString()
+                     << processador->toString()
+                     << "\n";
 
 
             return true;
@@ -842,9 +871,9 @@ bool Simulador::validateCommand(::istringstream &comando) {
 
             for (const auto &processador: getProcessadoresStates())
                 *winInfo << "Nome: " << processador.first
-                        << "Id Processador: " << processador.second.second->getNumId()
-                        << "Id Zona: " << processador.second.first
-                        << '\n';
+                         << "Id Processador: " << processador.second.second->getNumId()
+                         << "Id Zona: " << processador.second.first
+                         << '\n';
 
             return true;
         } else {
@@ -875,13 +904,13 @@ bool Simulador::validateCommand(::istringstream &comando) {
     return false;
 }
 
-bool Simulador::readFile(const ::string &filename) {
+bool Simulador::readFile(const string &filename) {
     fstream file(FILE_PATH + filename, ios::in);
 
     if (file.is_open()) {
         string line;
-        while (std::getline(file, line)) {
-            std::istringstream cmd(line);
+        while (getline(file, line)) {
+            istringstream cmd(line);
             if (!validateCommand(cmd)) {
                 *winInfo << "\nComando invalido!\n";
             }
@@ -946,7 +975,9 @@ Simulador::~Simulador() {
 }
 
 void Simulador::saveProcessadorState(int idZona, int idProcessador, const string &name) {
-    processadorStatesList[name] = pair<int, Processador*>(idZona, (Processador*) habitacao->getZona(idZona)->getComponente(idProcessador));
+    processadorStatesList[name] = pair<int, Processador *>(idZona,
+                                                           (Processador *) habitacao->getZona(idZona)->getComponente(
+                                                                   idProcessador));
 }
 
 bool Simulador::loadProcessadorState(const string &name) {
@@ -956,10 +987,11 @@ bool Simulador::loadProcessadorState(const string &name) {
     auto zona = habitacao->getZona(it->second.first);
     if (!zona) return false;
 
-    auto processador = (Processador*) zona->getComponente(it->second.second->getNumId());
+    auto processador = (Processador *) zona->getComponente(it->second.second->getNumId());
     if (!processador) return false;
 
     *processador = *it->second.second;
+    return true;
 }
 
 void Simulador::deleteProcessadorState(const string &name) {

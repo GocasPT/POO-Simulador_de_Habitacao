@@ -5,8 +5,6 @@
 
 #include "../Habitacao/Habitacao.h"
 #include "../../Lib/Terminal/Terminal.h"
-#include "../Habitacao/Zona/Componente/Sensor/SensorFactory.h"
-#include "../Habitacao/Zona/Componente/Aparelho/AparelhoFactory.h"
 
 using std::string, std::istringstream, std::map, std::pair;
 
@@ -18,7 +16,7 @@ class Simulador {
     bool inSimulation;  // Flag que indica se o simulador esta a correr
     Habitacao *habitacao; // Ponteiro para a habitacao
     int idCount;
-    map<string, pair<int, Processador*>> processadorStatesList; // Lista de processadores
+    map<string, pair<int, Processador *>> processadorStatesList; // Lista de processadores
 
     void init();    // Inicializa o simulador
     void start();   // Inicia o simulador

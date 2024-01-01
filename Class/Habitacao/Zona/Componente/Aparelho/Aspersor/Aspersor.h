@@ -1,19 +1,14 @@
 #ifndef ASPERSOR_H
 #define ASPERSOR_H
 
-#include <iostream>
 #include "../Aparelho.h"
-
-class Aspersor : public Aparelho {
-private:
-
+#include "../../../Zona.h"
+    
+class Aspersor : public Aparelho{
 public:
-
-    Aspersor(int id, char letter, string name, std::map<string, Propriedade *> propriedades);
-
+    Aspersor(int id, Zona& zona);
 
     void ligar();
-
     void desligar();
 };
 

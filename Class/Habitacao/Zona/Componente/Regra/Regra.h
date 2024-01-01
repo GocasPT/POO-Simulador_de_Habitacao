@@ -7,21 +7,25 @@
 #include "../Sensor/Sensor.h"
 #include "../../Propriedade/Propriedade.h"
 
-enum Operacao {
-    igual_a,
-    menor_que,
-    maior_que,
-    entre,
-    fora };
+enum class Operacao {
+    IGUAL_A,
+    MENOR_QUE,
+    MAIOR_QUE,
+    ENTRE,
+    FORA,
+    UNKNOWN,
+};
 
 class Regra : public Componente {
-    Sensor &sensor; // Sensor que a regra vai ler
-    Operacao operacao;
-    int valor1;
-    int valor2; // Valor adicional para regras "entre" e "fora"
+    const Sensor &sensor; // Sensor que a regra vai ler
+    const Operacao operacao;
+    const int x;
+    const int y; // Valor adicional para regras "entre" e "fora"
 
 public:
-    Regra(int id);
+    Regra(int id, Operacao operacao, Sensor *sensor, int x, int y=0);
+
+    static Operacao stringToOperacao(const string &operacao);
 
     void readSensor(); // Lê o sensor
     bool validate(); // Valida a regra

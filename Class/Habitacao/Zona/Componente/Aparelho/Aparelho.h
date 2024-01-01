@@ -5,7 +5,7 @@
 #include "../../Propriedade/Propriedade.h"
 #include "../Componente.h"
 
-using std::string;
+using std::map;
 
 //TODO [Meta 2]: Virutalizar a class (hirearquia)
 class Aparelho : public Componente {
@@ -13,13 +13,13 @@ protected:
     const string name; // Nome do aparelho
     const char letter; // Letra do aparelho
     bool state = false; // Estado do aparelho
-    const std::map<string, Propriedade *> propriedades; // Lista de propriedades da zona que o aparelho vai modificar
+    map<string, Propriedade *> propriedades; // Lista de propriedades da zona que o aparelho vai modificar
     int instantCount = 0; // Contador de instantes
 
 public:
-    Aparelho(int id, char letter, string name, std::map<string, Propriedade *> propriedades);
+    Aparelho(int id, char letter, string name);
 
-    std::string getName() const; // Getter do nome
+    string getName() const; // Getter do nome
     char getLetter() const; // Getter da letra
     bool getState() const; // Getter do estado
 

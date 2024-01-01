@@ -12,10 +12,12 @@ enum class TipoSensor {
     HUMIDADE,
     SOM,
     FUMO,
+    UNKNOWN,
 };
 
 class SensorFactory {
 public:
+    static TipoSensor stringToTipoSensor(const string &tipo);
     static Sensor *createSensor(TipoSensor tipo, int id, Zona &zona);
 };
 

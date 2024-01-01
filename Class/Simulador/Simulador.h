@@ -5,6 +5,10 @@
 
 #include "../Habitacao/Habitacao.h"
 #include "../../Lib/Terminal/Terminal.h"
+#include "../Habitacao/Zona/Componente/Sensor/SensorFactory.h"
+#include "../Habitacao/Zona/Componente/Aparelho/AparelhoFactory.h"
+
+using std::string, std::istringstream;
 
 class Simulador {
     term::Terminal &term;   // Referencia para o terminal
@@ -13,6 +17,7 @@ class Simulador {
 
     bool inSimulation;  // Flag que indica se o simulador esta a correr
     Habitacao *habitacao; // Ponteiro para a habitacao
+    static int idCount;
 
     void init();    // Inicializa o simulador
     void start();   // Inicia o simulador
@@ -20,8 +25,8 @@ class Simulador {
     void run(); // Loop principal do simulador
     void next(); // Proximo passo do simulador
     void updateView();  // Atualiza a view do simulador
-    bool validateCommand(std::istringstream &command);  // Valida um comando
-    bool readFile(const std::string &filename);    // Le um ficheiro de configuracao
+    bool validateCommand(istringstream &command);  // Valida um comando
+    bool readFile(const string &filename);    // Le um ficheiro de configuracao
 
     bool checkHabitacao(); // Verifica se a habitacao existe
     bool createHabitacao(int wide, int heigth); // Cria uma habitacao

@@ -1,12 +1,13 @@
 #include "Aquecedor.h"
 
-using std::cout;
-using std::endl;
+using std::cout, std::endl;
 
-Aquecedor::Aquecedor(int id, char letter, std::string name, std::map<string, Propriedade *> propriedades)
-        : Aparelho(id, letter, name, propriedades){
-
+Aquecedor::Aquecedor(int id, Zona &zona) : Aparelho(id, 'a', "aquecedor") {
+    propriedades[TEMPERATURA_STR] = zona.getPropriedade(TEMPERATURA_STR);
+    propriedades[SOM_STR] = zona.getPropriedade(SOM_STR);
 }
+
+// TODO: funções virtuais + tempo
 
 void Aquecedor::ligar() {
     toggleState();

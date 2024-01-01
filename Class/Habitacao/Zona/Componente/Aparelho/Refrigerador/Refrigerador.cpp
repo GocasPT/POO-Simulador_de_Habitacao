@@ -1,9 +1,10 @@
 #include "Refrigerador.h"
 
-Refrigerador::Refrigerador(int id, char letter, std::string name, std::map<string, Propriedade *> propriedades)
-        : Aparelho(id, letter, name, propriedades){
-
+Refrigerador::Refrigerador(int id, Zona &zona) : Aparelho(id, 'r', "refrigerador") {
+    propriedades[TEMPERATURA_STR] = zona.getPropriedade(TEMPERATURA_STR);
+    propriedades[SOM_STR] = zona.getPropriedade(SOM_STR);
 }
+
 
 void Refrigerador::ligar() {
     toggleState();

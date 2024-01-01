@@ -1,8 +1,7 @@
+#include <sstream>
 #include "Zona.h"
 #include "Propriedade/Propriedades.h"
-
-using std::cout;
-using std::endl;
+#include "Componente/Sensor/Sensor.h"
 
 Zona::Zona(int id) : id(id) {
     idCounter = 0;
@@ -19,6 +18,8 @@ Zona::Zona(int id) : id(id) {
 
 int Zona::getId() const { return id; }
 
+int Zona::getIdCounter() const { return idCounter; }
+
 vector<Propriedade *> Zona::getPropriedades() const {
     vector < Propriedade * > vectorReturn;
 
@@ -28,8 +29,8 @@ vector<Propriedade *> Zona::getPropriedades() const {
     return vectorReturn;
 }
 
-vector <Componente> Zona::getComponentes() const {
-    vector <Componente> vectorReturn;
+vector <Componente*> Zona::getComponentes() const {
+    vector <Componente*> vectorReturn;
 
     for (const auto &componente: componentes)
         vectorReturn.push_back(componente.second);
@@ -45,83 +46,48 @@ Propriedade *Zona::getPropriedade(const string &key) const {
         return nullptr;
 }
 
-const Componente *Zona::getComponente(const string &id) const {
+const Componente *Zona::getComponente(const int id) const {
     auto obj = componentes.find(id);
     if (obj != componentes.end()) {
-        return &obj->second;
+        return obj->second;
     } else
         return nullptr;
 }
 
-//TODO [Meta 2]: funções para addicionar e remover componentes
-bool Zona::addComponente(const string &id) {
-    //return false;
-
-    // Verifica se o componente já existe
-    if (componentes.find(id) != componentes.end()) {
-        cout << "Erro: Componente com ID " << id << " já existe na zona." << endl;
-        return false;
-    }
-
-    // Cria e adiciona o componente (um Processador)
-   // Processador processador(id);
-     //componentes[id] = processador;
-
-    cout << "Componente com ID " << id << " adicionado com sucesso." << endl;
+bool Zona::addComponente(Aparelho *aparelho) {
+    if (!aparelho) return false;
+    componentes[aparelho->getNumId()] = aparelho;
+    idCounter++;
     return true;
 }
 
-bool Zona::addComponente(const string &id, char type) {
-    //Sensor e aparelho
-    if (componentes.find(id) != componentes.end()) {
-        cout << "Erro: Componente com ID " << id << " já existe na zona." << endl;
-        return false;
-    }
-
-    // Cria e adiciona o componente (um aparelho)
-    //Aparelho aparelho(id);
-    //componentes[id] = aparelho;
-
-    // Cria e adiciona o componente (um sensor)
-    //Sensor sensor(id);
-    //componentes[id] = sensor;
-
-    cout << "Componente com ID " << id << " adicionado com sucesso." << endl;
-
-    return false;
+bool Zona::addComponente(Processador *processador) {
+    if (!processador) return false;
+    componentes[processador->getNumId()] = processador;
+    idCounter++;
+    return true;
 }
 
-bool Zona::addComponente(const string &id, char type, char rule) {
-    //regra
-    if (componentes.find(id) != componentes.end()) {
-        std::cout << "Erro: Componente com ID " << id << " já existe na zona." << std::endl;
-        return false;
-    }
-
-    // Cria e adiciona o componente (uma regra)
-    //Regra regra(id);
-    //componentes[id] = regra;
-
-    cout << "Componente com ID " << id << " adicionado com sucesso." << endl;
-
-
-    return false;
+bool Zona::addComponente(Sensor *sensor) {
+    if (!sensor) return false;
+    componentes[sensor->getNumId()] = sensor;
+    idCounter++;
+    return true;
 }
 
-bool Zona::removeComponente(const string &id) {
+bool Zona::removeComponente(char tipoComponente, const int id) {
     auto it = componentes.find(id);
 
-    // Verifica se o componente existe
     if (it != componentes.end()) {
-        // Remove o componente
-        componentes.erase(it);
-
-        cout << "Componente com ID " << id << " removido com sucesso." << endl;
-        return true;
-    } else {
-        cout << "Erro: Componente com ID " << id << " não encontrado na zona." << endl;
-        return false;
+        Componente* obj = it->second;
+        if (obj->getLetterID() == tipoComponente) {
+            //TODO: verificar as ligações
+            componentes.erase(it);
+            return true;
+        }
     }
+
+    return false;
 }
 
 bool Zona::setPropriedade(const string &key, int value) {
@@ -136,4 +102,7 @@ bool Zona::setPropriedade(const string &key, int value) {
 Zona::~Zona() {
     for (const auto &propriedade: propriedades)
         delete propriedade.second;
+
+    for (const auto &componente: componentes)
+        delete componente.second;
 }

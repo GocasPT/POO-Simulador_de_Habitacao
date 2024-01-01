@@ -1,36 +1,49 @@
+#include <map>
 #include "Regra.h"
 
-using std::cout;
+using std::map, std::cout;
 
+Regra::Regra(int id, Operacao operacao, Sensor *sensor, int x, int y) : Componente('r', id), sensor(*sensor), operacao(operacao), x(x), y(y){};
 
-//falta os argumentos do componente
-Regra::Regra(int id) : Componente( , ){
+Operacao Regra::stringToOperacao(const string &operacao) {
+    static const map<string, Operacao> operacaoMap = {
+            {"igual_a", Operacao::IGUAL_A},
+            {"menor_que", Operacao::MENOR_QUE},
+            {"maior_que", Operacao::MAIOR_QUE},
+            {"entre", Operacao::ENTRE},
+            {"fora", Operacao::FORA},
+    };
 
-};
+    auto it = operacaoMap.find(operacao);
+    if (it != operacaoMap.end())
+        return it->second;
+
+    return Operacao::UNKNOWN;
+}
 
 void Regra::readSensor() {
-    int valorLido = sensor.read(); //sei que não é read, mas não estou a perceber o que é para meter
+    int valorLido = sensor.getPropriedadeValue(); //sei que não é read, mas não estou a perceber o que é para meter
     cout << "Valor lido do sensor: " << valorLido << std::endl;
 }
 
 bool Regra::validate() {
-    int valorLido = sensor.read(); //sei que não é read, mas não estou a perceber o que é para meter
+    int valorLido = sensor.getPropriedadeValue(); //sei que não é read, mas não estou a perceber o que é para meter
 
     switch (operacao) {
-        case igual_a:
-            return (valorLido == valor1);
+        case Operacao::IGUAL_A:
+            return (valorLido == x);
 
-        case menor_que:
-            return (valorLido < valor1);
+        case Operacao::MENOR_QUE:
+            return (valorLido < x);
 
-        case maior_que:
-            return (valorLido > valor1);
+        case Operacao::MAIOR_QUE:
+            return (valorLido > x);
 
-        case entre:
-            return (valorLido >= valor1 && valorLido <= valor2);
+        case Operacao::ENTRE:
+            return (valorLido >= x && valorLido <= y);
 
-        case fora:
-            return (valorLido < valor1 || valorLido > valor2);
+        case Operacao::FORA:
+            return (valorLido < x || valorLido > y);
 
         default:
             std::cerr << "Operacao invalida." << std::endl;

@@ -3,6 +3,10 @@
 
 #include <string>
 
+using std::string;
+
+class Zona;
+
 //TODO: Verirficar se é necessário ou sse fica aqui
 enum class TipoComponente {
     SENSOR,
@@ -21,8 +25,11 @@ protected:
 public:
     Componente(char c, int id);
 
-    int getId() const; // Getter do id (número)
+    string getId() const; // Getter do id
+    int getNumId() const; // Getter do número do id
     char getLetterID() const; // Getter da letra do id
+
+    string toString() const; //TODO: virtualizar
 };
 
 #endif //COMPONENTES_H

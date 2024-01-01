@@ -2,20 +2,13 @@
 #define AQUECEDOR_H
 
 #include "../Aparelho.h"
-#include <iostream>
-
-using std::string;
+#include "../../../Zona.h"
 
 class Aquecedor : public Aparelho {
-private:
-
 public:
-
-    Aquecedor(int id, char letter, string name, std::map<string, Propriedade *> propriedades);
-
-    void ligar() ;
-
-
+    Aquecedor(int id, Zona& zona);
+    
+    void ligar();
     void desligar();
 };
 

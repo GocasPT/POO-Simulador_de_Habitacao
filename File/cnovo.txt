@@ -1,0 +1,6 @@
+hnova 2 2
+znova 1 1
+cnovo 0 s Temperatura
+cnovo 0 a Aquecedor
+cnovo 0 p ligar
+zcomp 0

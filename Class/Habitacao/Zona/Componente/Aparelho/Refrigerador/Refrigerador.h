@@ -1,19 +1,14 @@
 #ifndef REFRIGERADOR_H
 #define REFRIGERADOR_H
 
-#include <iostream>
 #include "../Aparelho.h"
+#include "../../../Zona.h"
 
-class Refrigerador : public Aparelho {
-private:
-
-
+class Refrigerador : public Aparelho{
 public:
-
-    Refrigerador(int id, char letter, string name, std::map<string, Propriedade *> propriedades);
+    Refrigerador(int id, Zona& zona);
 
     void ligar();
-
     void desligar();
 };
 

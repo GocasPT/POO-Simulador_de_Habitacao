@@ -1,21 +1,14 @@
 #ifndef LAMPADA_H
 #define LAMPADA_H
 
-#include <iostream>
 #include "../Aparelho.h"
+#include "../../../Zona.h"
 
-
-class Lampada : public Aparelho {
-private:
-
-
+class Lampada : public Aparelho{
 public:
-
-    Lampada(int id, char letter, string name, std::map<string, Propriedade *> propriedades);
-
+    Lampada(int id, Zona& zona);
 
     void ligar();
-
     void desligar();
 };
 

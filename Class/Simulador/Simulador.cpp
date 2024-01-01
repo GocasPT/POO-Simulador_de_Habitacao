@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <iosfwd>
 
 #define MENU_WIDTH 75
 #define MENU_HEIGHT 20
@@ -19,9 +20,7 @@
 
 #define FILE_PATH "../File/"
 
-using std::endl;
-using std::string;
-using std::stoi;
+using std::endl, std::ostringstream, std::string, std::stringstream, std::vector, std::fstream, std::ios;
 
 Simulador::Simulador() : term(term::Terminal::instance()) {
     winMenu = new term::Window(term.getNumRows() + term.getNumRows() / 2, 15, MENU_WIDTH, MENU_HEIGHT, false);
@@ -32,10 +31,11 @@ Simulador::Simulador() : term(term::Terminal::instance()) {
     habitacao = nullptr;
 
     inSimulation = false;
+    idCount = 0;
 }
 
 void Simulador::menu() {
-    std::ostringstream os;
+    ostringstream os;
     string input;
     int opt;
 
@@ -57,7 +57,7 @@ void Simulador::menu() {
         winMenu->clear();
         *winMenu << os.str();
         *winMenu >> input;
-        std::stringstream(input) >> opt;
+        stringstream(input) >> opt;
 
         if (opt == 2) return;
     } while (opt != 1);
@@ -100,7 +100,7 @@ void Simulador::run() {
         string cmdInput;
         *winConsole >> cmdInput;
 
-        std::istringstream cmd(cmdInput);
+        istringstream cmd(cmdInput);
         if (!validateCommand(cmd)) {
             *winInfo << "Comando invalido!\n";
         }
@@ -127,8 +127,8 @@ void Simulador::updateView() {
         }
 }
 
-bool Simulador::validateCommand(std::istringstream &comando) {
-    std::vector<string> argv;
+bool Simulador::validateCommand(::istringstream &comando) {
+    vector<string> argv;
 
     while (comando) {
         string arg;
@@ -161,7 +161,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
                              << "zcomp <ID zona>\n"
                              << "zprops <ID zona>\n"
                              << "pmod <ID zona> <name> <value>\n"
-                             << "cnovo <ID zona> <s | p | a> <tipo | comando>\n"
+                             << "cnovo.txt <ID zona> <s | p | a> <tipo | comando>\n"
                              << "crem <ID zona> <s | p | a> <ID>\n"
                              << "\n"
                              << "Comandos para os precessadores:\n"
@@ -215,7 +215,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
                              << "zcomp <ID zona>\n"
                              << "zprops <ID zona>\n"
                              << "pmod <ID zona> <name> <value>\n"
-                             << "cnovo <ID zona> <s | p | a> <tipo | comando>\n"
+                             << "cnovo.txt <ID zona> <s | p | a> <tipo | comando>\n"
                              << "crem <ID zona> <s | p | a> <ID>\n"
                              << "[ENTER PARA CONTINUAR]"
                              << "\n";
@@ -377,7 +377,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
                     int processadores = 0;
 
                     for (const auto &componente: zona->getComponentes()) {
-                        char type = componente.getLetterID();
+                        char type = componente->getLetterID();
 
                         switch (type) {
                             case 'a':
@@ -420,12 +420,8 @@ bool Simulador::validateCommand(std::istringstream &comando) {
 
             *winInfo << "\nComponentes da zona '" << zona->getId() << "':\n";
             for (const auto &componente: zona->getComponentes()) {
-                char type = componente.getLetterID();
-                int id = componente.getId();
+                char type = componente->getLetterID();
                 string typeText;
-                std::stringstream ss;
-
-                ss << type << id;
 
                 switch (type) {
                     case 'a':
@@ -439,7 +435,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
                         break;
                 }
 
-                *winInfo << "\nComponente: " << ss.str() << "'\n";
+                *winInfo << "\nComponente: " << componente->getId() << "'\n";
                 *winInfo << "Tipo: " << typeText << "\n";
             }
 
@@ -491,12 +487,10 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         } else {
             *winInfo << "\nComando 'pmod' invalido - pmod <ID zona> <name> <value>\n";
         }
-        //TODO: verificar os argumentos
-        //TODO: verificar se funciona
     } else if (argv[0] == "cnovo") {
         if (argv.size() == 4 && isNumber(argv[1]) && (argv[2] == "s" || argv[2] == "p" || argv[2] == "a") &&
             !isNumber(argv[3])) {
-            *winInfo << "\nComando 'cnovo' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
+            *winInfo << "\nComando 'cnovo.txt' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
 
             if (!checkHabitacao()) return true;
 
@@ -506,45 +500,43 @@ bool Simulador::validateCommand(std::istringstream &comando) {
                 return true;
             }
 
-
             TipoComponente tipoComponente;
 
             switch (argv[2][0]) {
                 case 's':
-                    *winInfo << "\nAdicionar Sensor...\n";
                     tipoComponente = TipoComponente::SENSOR;
                     break;
                 case 'p':
-                    *winInfo << "\nAdicionar Processador...\n";
                     tipoComponente = TipoComponente::PROCESSADOR;
                     break;
                 case 'a':
-                    *winInfo << "\nAdicionar Aparelho...\n";
                     tipoComponente = TipoComponente::APARELHO;
                     break;
             }
 
+            int id = zona->getIdCounter();
 
-
-            //TODO: identificar tipo/comando
             switch (tipoComponente) {
                 case TipoComponente::SENSOR:
-                    *winInfo << "\nAdicionar Sensor...\n";
+                    if (zona->addComponente(SensorFactory::createSensor(SensorFactory::stringToTipoSensor(argv[3]), id, *zona)))
+                        *winInfo << "\nFoi adicionado um sensor\n" << zona->getComponente(id)->toString() << '\n';
                     break;
                 case TipoComponente::PROCESSADOR:
-                    *winInfo << "\nAdicionar Processador...\n";
+                    if (zona->addComponente(new Processador(id, argv[3])))
+                        *winInfo << "\nFoi adicionado um processador\n" << zona->getComponente(id)->toString() << '\n';
                     break;
                 case TipoComponente::APARELHO:
-                    *winInfo << "\nAdicionar Aparelho...\n";
+                    if (zona->addComponente(AparelhoFactory::createAparelho(AparelhoFactory::stringToTipoeAparelho(argv[3]), id, *zona)))
+                        *winInfo << "\nFoi adicionado um aparelho\n" << zona->getComponente(id)->toString() << '\n';
+                    break;
+                default:
                     break;
             }
 
-
             return true;
         } else {
-            *winInfo << "\nComando 'cnovo' invalido - cnovo <ID zona> <s | p | a> <tipo | comando>\n";
+            *winInfo << "\nComando 'cnovo.txt' invalido - cnovo.txt <ID zona> <s | p | a> <tipo | comando>\n";
         }
-        //TODO: verificar se funciona
     } else if (argv[0] == "crem") {
         if (argv.size() == 4 && isNumber(argv[1]) && (argv[2] == "s" || argv[2] == "p" || argv[2] == "a") &&
             isNumber(argv[3])) {
@@ -558,6 +550,8 @@ bool Simulador::validateCommand(std::istringstream &comando) {
                 return true;
             }
 
+            zona->removeComponente(argv[2][0], stoi(argv[3]));
+
             return true;
         } else {
             *winInfo << "\nComando 'crem' invalido - crem <ID zona> <s | p | a> <ID>\n";
@@ -566,7 +560,7 @@ bool Simulador::validateCommand(std::istringstream &comando) {
         // Comandos para os processadores
         //TODO: verificar se funciona
     } else if (argv[0] == "rnova") {
-        if (argv.size() >= 6 && isNumber(argv[1]) && isNumber(argv[2]) && isNumber(argv[3]) && isNumber(argv[4]) &&
+        if (argv.size() >= 6 && argv.size() <= 7 && isNumber(argv[1]) && isNumber(argv[2]) && isNumber(argv[3]) && isNumber(argv[4]) &&
             isNumber(argv[5])) {
             *winInfo << "\nComando 'rnova' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << " "
                      << argv[4] << "\n";
@@ -578,6 +572,33 @@ bool Simulador::validateCommand(std::istringstream &comando) {
                 *winInfo << "\nZona nao encontrada!\n";
                 return true;
             }
+
+            auto processador = (Processador *) zona->getComponente(stoi(argv[2]));
+            if (!processador) {
+                *winInfo << "\nProcessador nao encontrado!\n";
+                return true;
+            }
+
+            auto sensor = (Sensor *) zona->getComponente(stoi(argv[4]));
+            if (!sensor) {
+                *winInfo << "\nSensor nao encontrado!\n";
+                return true;
+            }
+
+            Regra* regra;
+            int id = idCount;
+
+            if (argv.size() == 6)
+                regra = new Regra(id++, Regra::stringToOperacao(argv[3]), sensor, stoi(argv[6]));
+            else if (argv.size() == 7)
+                regra = new Regra(id++, Regra::stringToOperacao(argv[3]), sensor,  stoi(argv[6]), stoi(argv[7]));
+
+            if (!regra) {
+                *winInfo << "\nErro na criacao da regra!\n";
+                return true;
+            }
+
+            processador->addRegra(*regra);
 
             return true;
         } else {
@@ -764,8 +785,8 @@ bool Simulador::validateCommand(std::istringstream &comando) {
     return false;
 }
 
-bool Simulador::readFile(const string &filename) {
-    std::fstream file(FILE_PATH + filename, std::ios::in);
+bool Simulador::readFile(const ::string &filename) {
+    fstream file(FILE_PATH + filename, ios::in);
 
     if (file.is_open()) {
         string line;

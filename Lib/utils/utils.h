@@ -3,6 +3,8 @@
 
 #include <string>
 
-bool isNumber(const std::string &s);
+using std::string;
+
+bool isNumber(const string &s);
 
 #endif //UTILS_H

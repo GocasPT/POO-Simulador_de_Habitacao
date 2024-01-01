@@ -5,21 +5,21 @@
 #include "../Regra/Regra.h"
 #include "../Aparelho/Aparelho.h"
 
-using std::string;
-using std::vector;
+using std::string, std::vector;
 
 class Processador : public Componente {
+    string comando;
     vector<Regra> regras; // Lista de regras
     vector<Aparelho *> aparelhos; // Lista de aparelhos associados
 
 public:
-    Processador(int id);
+    Processador(int id, string comando);
 
-    void addRegra(int id, Sensor &sensor); // Adiciona uma regra
-    void addAparelho(Aparelho &aparelho);   // Adiciona um aparelho
+    void addRegra(Regra &regra); // Adiciona uma regra
+    void addAparelho(Aparelho *aparelho);   // Adiciona um aparelho
 
     bool validateRegras(); // Valida as regras
-    void sendCommand(const string &command); // Envia um comando para os aparelhos
+    void sendCommand(); // Envia um comando para os aparelhos
 
     ~Processador();
 };

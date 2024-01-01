@@ -1,9 +1,11 @@
 #include "Aspersor.h"
 
-Aspersor::Aspersor(int id, char letter, std::string name, std::map<string, Propriedade *> propriedades)
-         : Aparelho(id, letter, name, propriedades) {
-
+Aspersor::Aspersor(int id, Zona &zona) : Aparelho(id, 's', "aspersor") {
+    propriedades[HUMIDADE_STR] = zona.getPropriedade(HUMIDADE_STR);
+    propriedades[VIBRACAO_STR] = zona.getPropriedade(VIBRACAO_STR);
+    propriedades[FUMO_STR] = zona.getPropriedade(FUMO_STR);
 }
+
 
 void Aspersor::ligar() {
     toggleState();

@@ -1,0 +1,5 @@
+hnova 2 2
+znova 1 1
+cnovo 0 p ligar
+cnovo 0 s Temperatura
+rnova 0 0 igual_a 1 10

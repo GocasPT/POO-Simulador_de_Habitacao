@@ -4,7 +4,7 @@ Propriedade::Propriedade(const string &name, const string &unit, int minValue, b
         : unit(unit), minValue(minValue),
           isPercentage(isPercentage) {
     this->name = name;
-    value = 0;
+    value = 0; //TODO: radnom number
 }
 
 string Propriedade::getName() const { return name; }

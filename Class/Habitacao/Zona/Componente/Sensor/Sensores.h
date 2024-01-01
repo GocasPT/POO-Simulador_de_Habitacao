@@ -1,6 +1,7 @@
 #ifndef SENSORES_H
 #define SENSORES_H
 
+#include "Sensor.h"
 #include "SensorTemperatura/SensorTemperatura.h"
 #include "SensorMovimento/SensorMovimento.h"
 #include "SensorLuminosidade/SensorLuminosidade.h"

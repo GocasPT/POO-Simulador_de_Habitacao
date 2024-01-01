@@ -1,0 +1,3 @@
+exec cnovo.txt
+crem 0 s 0
+zcomp 0

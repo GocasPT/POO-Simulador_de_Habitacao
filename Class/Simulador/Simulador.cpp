@@ -110,28 +110,13 @@ void Simulador::run() {
     }
 }
 
-//TODO: next
 void Simulador::next() {
     if (habitacao == nullptr) return;
 
     for(int i = 0; i < habitacao->getHeight(); i++)
         for(int j = 0; j < habitacao->getWide(); j++) {
             Zona &zona = *habitacao->getZona(i, j);
-            for (const auto &componente: zona.getComponentes()) {
-                char type = componente->getLetterID();
-
-                // TODO: update
-                switch (type) {
-                    case 'a':
-                        //auto aparelho = (Aparelho *) componente;
-                        break;
-                    case 's':
-                        continue;
-                    case 'p':
-                        //auto processador = (Processador *) componente;
-                        break;
-                }
-            }
+            zona.update();
         }
 }
 
@@ -143,7 +128,8 @@ void Simulador::updateView() {
             winZones[i][j]->clear();
             if (habitacao->getZona(i, j) != nullptr) {
                 Zona &zona = *habitacao->getZona(i, j);
-                *winZones[i][j] << zona.getId();
+                *winZones[i][j] << zona.getId() << '\n';
+                //TODO: updateView
             }
         }
 }
@@ -735,7 +721,7 @@ bool Simulador::validateCommand(::istringstream &comando) {
             processador->addAparelho(aparelho);
             *winInfo << "\nAparelho associado com sucesso!\n"
                      << processador->toString()
-                     << "\n"
+                     << "\n";
 
             return true;
         } else {

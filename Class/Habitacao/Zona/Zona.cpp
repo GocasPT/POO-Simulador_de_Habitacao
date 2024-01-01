@@ -3,6 +3,8 @@
 #include "Propriedade/Propriedades.h"
 #include "Componente/Sensor/Sensor.h"
 
+using std::ostringstream;
+
 Zona::Zona(int id) : id(id) {
     idCounter = 0;
 
@@ -98,9 +100,20 @@ bool Zona::setPropriedade(const string &key, int value) {
         return false;
 }
 
-//TODO: toString
 string Zona::toString() const {
-    return std::string();
+    ostringstream oss;
+
+    oss << "Zona:\n"
+        << "ID: " << id
+        << "Num de componentes: " << componentes.size()
+        << "\n";
+
+    return oss.str();
+}
+
+//TODO: update
+void Zona::update() {
+
 }
 
 Zona::~Zona() {

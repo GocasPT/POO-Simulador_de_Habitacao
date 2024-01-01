@@ -37,6 +37,8 @@ public:
 
     string toString() const; // Retorna uma string com a informacao da zona
 
+    void update(); // Atualiza os componentes da zona
+
     ~Zona();
 };
 

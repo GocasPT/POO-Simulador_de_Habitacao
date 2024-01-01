@@ -27,7 +27,6 @@ public:
 
     static Operacao stringToOperacao(const string &operacao);
 
-    void readSensor(); // Lê o sensor
     bool validate(); // Valida a regra
 
     string toString() const;

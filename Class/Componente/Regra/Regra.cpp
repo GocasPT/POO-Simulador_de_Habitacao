@@ -23,11 +23,6 @@ Operacao Regra::stringToOperacao(const string &operacao) {
     return Operacao::UNKNOWN;
 }
 
-void Regra::readSensor() {
-    int valorLido = sensor.getPropriedadeValue(); //sei que não é read, mas não estou a perceber o que é para meter
-    cout << "Valor lido do sensor: " << valorLido << std::endl;
-}
-
 bool Regra::validate() {
     int valorLido = sensor.getPropriedadeValue(); //sei que não é read, mas não estou a perceber o que é para meter
 
@@ -46,10 +41,6 @@ bool Regra::validate() {
 
         case Operacao::FORA:
             return (valorLido < x || valorLido > y);
-
-        default:
-            std::cerr << "Operacao invalida." << std::endl;
-            return false;
     }
 }
 
@@ -82,27 +73,3 @@ string Regra::toString() const {
 
     return oss.str();
 }
-
-
-/* meter na função principal (penso eu)
-
-    Componente componente(1);
-
-
-
-    Regra igualA(2);
-    Regra menorQue(3);
-    Regra entre(4);
-
-
-    igualA.readSensor();
-    cout << "Regra IGUAL_A valida: " << (igualA.validate() ? "Verdadeiro" : "Falso") << std::endl;
-
-    menorQue.readSensor();
-    cout << "Regra MENOR_QUE valida: " << (menorQue.validate() ? "Verdadeiro" : "Falso") << std::endl;
-
-    entre.readSensor();
-    cout << "Regra ENTRE valida: " << (entre.validate() ? "Verdadeiro" : "Falso") << std::endl;
-
-    return 0;
- */

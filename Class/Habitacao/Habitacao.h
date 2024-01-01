@@ -14,7 +14,7 @@ public:
 
     int getWide() const; // Getter para a largura
     int getHeight() const;  // Getter para a altura
-    Zona ***getListaZonas() const;  // Getter para a lista de zonas
+    Zona ***getZonas() const;  // Getter para a lista de zonas
     Zona *getZona(int x, int y) const;  // Getter para uma zona especifica
     Zona *getZona(int id) const;   // Getter para uma zona especifica
 

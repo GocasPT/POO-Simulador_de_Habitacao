@@ -8,7 +8,7 @@
 #include "../Habitacao/Zona/Componente/Sensor/SensorFactory.h"
 #include "../Habitacao/Zona/Componente/Aparelho/AparelhoFactory.h"
 
-using std::string, std::istringstream;
+using std::string, std::istringstream, std::map, std::pair;
 
 class Simulador {
     term::Terminal &term;   // Referencia para o terminal
@@ -18,6 +18,7 @@ class Simulador {
     bool inSimulation;  // Flag que indica se o simulador esta a correr
     Habitacao *habitacao; // Ponteiro para a habitacao
     int idCount;
+    map<string, pair<int, Processador*>> processadorStatesList; // Lista de processadores
 
     void init();    // Inicializa o simulador
     void start();   // Inicia o simulador
@@ -32,12 +33,10 @@ class Simulador {
     bool createHabitacao(int wide, int heigth); // Cria uma habitacao
     void deleteHabitacao(); // Apaga a habitacao
 
-    //TODO [Meta 2]: Cópia/recuperação de processadores (memoria dinamica)
-    /*
-    void saveProcessadorState(int idProcessador, const std::string &name); // Guarda o estado de um processador
+    void saveProcessadorState(int idZona, int idProcessador, const string &name); // Guarda o estado de um processador
     bool loadProcessadorState(const std::string &name); // Carrega o estado de um processador
     void deleteProcessadorState(const std::string &name); // Apaga o estado de um processador
-    */
+    vector<pair<string, pair<int, Processador *>>> getProcessadoresStates(); // Retorna os processadores da habitacao
 
 public:
     Simulador();

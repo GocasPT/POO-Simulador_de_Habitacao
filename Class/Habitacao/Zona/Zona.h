@@ -35,6 +35,8 @@ public:
 
     bool setPropriedade(const string &key, int value); // Altera uma propriedade
 
+    string toString() const; // Retorna uma string com a informacao da zona
+
     ~Zona();
 };
 

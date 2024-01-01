@@ -1,0 +1,3 @@
+exec rnova.txt
+cnovo 0 a Aquecedor
+asoc 0 0 2

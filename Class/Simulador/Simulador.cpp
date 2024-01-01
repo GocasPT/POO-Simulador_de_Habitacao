@@ -110,8 +110,29 @@ void Simulador::run() {
     }
 }
 
+//TODO: next
 void Simulador::next() {
+    if (habitacao == nullptr) return;
 
+    for(int i = 0; i < habitacao->getHeight(); i++)
+        for(int j = 0; j < habitacao->getWide(); j++) {
+            Zona &zona = *habitacao->getZona(i, j);
+            for (const auto &componente: zona.getComponentes()) {
+                char type = componente->getLetterID();
+
+                // TODO: update
+                switch (type) {
+                    case 'a':
+                        //auto aparelho = (Aparelho *) componente;
+                        break;
+                    case 's':
+                        continue;
+                    case 'p':
+                        //auto processador = (Processador *) componente;
+                        break;
+                }
+            }
+        }
 }
 
 void Simulador::updateView() {
@@ -161,7 +182,7 @@ bool Simulador::validateCommand(::istringstream &comando) {
                              << "zcomp <ID zona>\n"
                              << "zprops <ID zona>\n"
                              << "pmod <ID zona> <name> <value>\n"
-                             << "cnovo.txt <ID zona> <s | p | a> <tipo | comando>\n"
+                             << "cnovo <ID zona> <s | p | a> <tipo | comando>\n"
                              << "crem <ID zona> <s | p | a> <ID>\n"
                              << "\n"
                              << "Comandos para os precessadores:\n"
@@ -215,7 +236,7 @@ bool Simulador::validateCommand(::istringstream &comando) {
                              << "zcomp <ID zona>\n"
                              << "zprops <ID zona>\n"
                              << "pmod <ID zona> <name> <value>\n"
-                             << "cnovo.txt <ID zona> <s | p | a> <tipo | comando>\n"
+                             << "cnovo <ID zona> <s | p | a> <tipo | comando>\n"
                              << "crem <ID zona> <s | p | a> <ID>\n"
                              << "[ENTER PARA CONTINUAR]"
                              << "\n";
@@ -355,14 +376,13 @@ bool Simulador::validateCommand(::istringstream &comando) {
             *winInfo << "\nComando 'zrem' invalido - zrem <ID zona>\n";
         }
 
-        //TODO: verificar se funciona
     } else if (argv[0] == "zlista") {
         if (argv.size() == 1) {
             *winInfo << "\n 'zlista'\n";
 
             if (!checkHabitacao()) return true;
 
-            Zona ***listaZonas = habitacao->getListaZonas();
+            Zona ***listaZonas = habitacao->getZonas();
             int wide = habitacao->getWide();
             int height = habitacao->getHeight();
 
@@ -405,7 +425,6 @@ bool Simulador::validateCommand(::istringstream &comando) {
         }
 
         // Comandos para as zonas
-        //TODO: verificar se funciona
     } else if (argv[0] == "zcomp") {
         if (argv.size() == 2 && isNumber(argv[1])) {
             *winInfo << "\nComando 'zcomp' com argumento " << argv[1] << "\n";
@@ -490,7 +509,7 @@ bool Simulador::validateCommand(::istringstream &comando) {
     } else if (argv[0] == "cnovo") {
         if (argv.size() == 4 && isNumber(argv[1]) && (argv[2] == "s" || argv[2] == "p" || argv[2] == "a") &&
             !isNumber(argv[3])) {
-            *winInfo << "\nComando 'cnovo.txt' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
+            *winInfo << "\nComando 'cnovo' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
 
             if (!checkHabitacao()) return true;
 
@@ -535,7 +554,7 @@ bool Simulador::validateCommand(::istringstream &comando) {
 
             return true;
         } else {
-            *winInfo << "\nComando 'cnovo.txt' invalido - cnovo.txt <ID zona> <s | p | a> <tipo | comando>\n";
+            *winInfo << "\nComando 'cnovo' invalido - cnovo <ID zona> <s | p | a> <tipo | comando>\n";
         }
     } else if (argv[0] == "crem") {
         if (argv.size() == 4 && isNumber(argv[1]) && (argv[2] == "s" || argv[2] == "p" || argv[2] == "a") &&
@@ -558,7 +577,6 @@ bool Simulador::validateCommand(::istringstream &comando) {
         }
 
         // Comandos para os processadores
-        //TODO: verificar se funciona
     } else if (argv[0] == "rnova") {
         if (argv.size() >= 6 && argv.size() <= 7 && isNumber(argv[1]) && isNumber(argv[2]) && !isNumber(argv[3]) && isNumber(argv[4]) &&
             isNumber(argv[5])) {
@@ -586,12 +604,11 @@ bool Simulador::validateCommand(::istringstream &comando) {
             }
 
             Regra* regra;
-            int id = idCount;
 
             if (argv.size() == 6)
-                regra = new Regra(id++, Regra::stringToOperacao(argv[3]), sensor, stoi(argv[5]));
+                regra = new Regra(idCount++, Regra::stringToOperacao(argv[3]), sensor, stoi(argv[5]));
             else if (argv.size() == 7)
-                regra = new Regra(id++, Regra::stringToOperacao(argv[3]), sensor, stoi(argv[5]), stoi(argv[6]));
+                regra = new Regra(idCount++, Regra::stringToOperacao(argv[3]), sensor, stoi(argv[5]), stoi(argv[6]));
 
 
             if (!regra) {
@@ -602,14 +619,13 @@ bool Simulador::validateCommand(::istringstream &comando) {
             *winInfo << "\nRegra criada com sucesso!\n";
             *winInfo << regra->toString() << "\n";
 
-            processador->addRegra(*regra);
+            processador->addRegra(regra);
 
             return true;
         } else {
             *winInfo
-                    << "\nComando 'rnova' invalido - rnova <ID zona> <ID proc. regras> <regra> <ID sensor> [param1] [param2] [...]\n";
+                    << "\nComando 'rnova' invalido - rnova <ID zona> <ID proc. regras> <regra> <ID sensor> [param1] (opcional)[param2]\n";
         }
-        //TODO: verificar se funciona
     } else if (argv[0] == "pmuda") {
         if (argv.size() == 4 && isNumber(argv[1]) && isNumber(argv[2]) && !isNumber(argv[3])) {
             *winInfo << "\nComando 'pmuda' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
@@ -629,13 +645,14 @@ bool Simulador::validateCommand(::istringstream &comando) {
             }
 
             processador->setComando(argv[3]);
-            *winInfo << "\nComando alterado com sucesso!\n"; //TODO: descrever mais merdas
+            *winInfo << "\nComando alterado com sucesso!\n"
+                        << processador->toString()
+                        << "\n";
 
             return true;
         } else {
             *winInfo << "\nComando 'pmuda' invalido - pmuda <ID zona> <ID proc. regras> <novo comando>\n";
         }
-        //TODO: verificar se funciona
     } else if (argv[0] == "rlista") {
         if (argv.size() == 3 && isNumber(argv[1]) && isNumber(argv[2])) {
             *winInfo << "\nComando 'rlista' com argumentos [" << argv[1] << " " << argv[2] << "\n";
@@ -648,16 +665,22 @@ bool Simulador::validateCommand(::istringstream &comando) {
                 return true;
             }
 
-            for (const auto &regra: zona->getPropriedades()) {
-                *winInfo << "\nPropriedade '" << regra->getName() << "'\n";
-                *winInfo << "Regra: " << regra->getValue() << "\n";
+            auto processador = (Processador*) zona->getComponente(stoi(argv[2]));
+            if (!processador) {
+                *winInfo << "\nProcessador nao encontrado!\n";
+                return true;
+            }
+
+            *winInfo << "\nRegras do processador:\n";
+
+            for (const auto &regra: processador->getRegras()) {
+                *winInfo << regra->toString() << '\n';
             }
 
             return true;
         } else {
             *winInfo << "\nComando 'rlista' invalido - rlista <ID zona> <ID proc. regras>\n";
         }
-        //TODO: verificar se funciona
     } else if (argv[0] == "rrem") {
         if (argv.size() == 4 && isNumber(argv[1]) && isNumber(argv[2]) && isNumber(argv[3])) {
             *winInfo << "\nComando 'rrem' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
@@ -670,40 +693,82 @@ bool Simulador::validateCommand(::istringstream &comando) {
                 return true;
             }
 
+            auto processador = (Processador *) zona->getComponente(stoi(argv[2]));
+            if (!processador) {
+                *winInfo << "\nProcessador nao encontrado!\n";
+                return true;
+            }
+
+            processador->removeRegra(stoi(argv[3]));
+            *winInfo << "\nRegra removida com sucesso!\n"
+                    << processador->toString()
+                    << '\n';
+
             return true;
         } else {
             *winInfo << "\nComando 'rrem' invalido - rrem <ID zona> <ID proc. regras> <ID regra>\n";
         }
-        //TODO: verificar se funciona
     } else if (argv[0] == "asoc") {
         if (argv.size() == 4 && isNumber(argv[1]) && isNumber(argv[2]) && isNumber(argv[3])) {
             *winInfo << "\nComando 'asoc' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
 
             if (!checkHabitacao()) return true;
 
-            Zona *zona = habitacao->getZona(stoi(argv[1]));
+            auto zona = habitacao->getZona(stoi(argv[1]));
             if (!zona) {
                 *winInfo << "\nZona nao encontrada!\n";
                 return true;
             }
 
+            auto processador = (Processador *) zona->getComponente(stoi(argv[2]));
+            if (!processador) {
+                *winInfo << "\nProcessador nao encontrado!\n";
+                return true;
+            }
+
+            auto aparelho = (Aparelho *) zona->getComponente(stoi(argv[3]));
+            if (!aparelho) {
+                *winInfo << "\nAparelho nao encontrado!\n";
+                return true;
+            }
+
+            processador->addAparelho(aparelho);
+            *winInfo << "\nAparelho associado com sucesso!\n"
+                     << processador->toString()
+                     << "\n"
 
             return true;
         } else {
             *winInfo << "\nComando 'asoc' invalido - asoc <ID zona> <ID proc. regras> <ID aparelho>\n";
         }
-        //TODO: verificar se funciona
     } else if (argv[0] == "ades") {
         if (argv.size() == 4 && isNumber(argv[1]) && isNumber(argv[2]) && isNumber(argv[3])) {
             *winInfo << "\nComando 'ades' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
 
             if (!checkHabitacao()) return true;
 
-            Zona *zona = habitacao->getZona(stoi(argv[1]));
+            auto zona = habitacao->getZona(stoi(argv[1]));
             if (!zona) {
                 *winInfo << "\nZona nao encontrada!\n";
                 return true;
             }
+
+            auto processador = (Processador *) zona->getComponente(stoi(argv[2]));
+            if (!processador) {
+                *winInfo << "\nProcessador nao encontrado!\n";
+                return true;
+            }
+
+            auto aparelho = (Aparelho *) zona->getComponente(stoi(argv[3]));
+            if (!aparelho) {
+                *winInfo << "\nAparelho nao encontrado!\n";
+                return true;
+            }
+
+            processador->removeAparelho(aparelho->getNumId());
+            *winInfo << "\nAparelho desassociado com sucesso!\n"
+                    << processador->toString()
+                    << "\n";
 
             return true;
         } else {
@@ -711,18 +776,28 @@ bool Simulador::validateCommand(::istringstream &comando) {
         }
 
         // Comandos para os aparelhos
-        //TODO: verificar se funciona
     } else if (argv[0] == "acom") {
         if (argv.size() == 4 && isNumber(argv[1]) && isNumber(argv[2]) && !isNumber(argv[3])) {
             *winInfo << "\nComando 'acom' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
 
             if (!checkHabitacao()) return true;
 
-            Zona *zona = habitacao->getZona(stoi(argv[1]));
+            auto zona = habitacao->getZona(stoi(argv[1]));
             if (!zona) {
                 *winInfo << "\nZona nao encontrada!\n";
                 return true;
             }
+
+            auto aparelho = (Aparelho *) zona->getComponente(stoi(argv[2]));
+            if (!aparelho) {
+                *winInfo << "\nAparelho nao encontrado!\n";
+                return true;
+            }
+
+            aparelho->readCommand(argv[3]);
+            *winInfo << "\nComando executado com sucesso!\n"
+                    << aparelho->toString()
+                     << "\n";
 
             return true;
         } else {
@@ -730,50 +805,67 @@ bool Simulador::validateCommand(::istringstream &comando) {
         }
 
         // Comandos para copiar/recuperar dos processadores
-        //TODO: verificar se funciona
     } else if (argv[0] == "psalva") {
         if (argv.size() == 4 && isNumber(argv[1]) && isNumber(argv[2]) && !isNumber(argv[3])) {
             *winInfo << "\nComando 'psalva' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << "\n";
 
             if (!checkHabitacao()) return true;
 
-            Zona *zona = habitacao->getZona(stoi(argv[1]));
-            if (!zona) {
-                *winInfo << "\nZona nao encontrada!\n";
-                return true;
-            }
+            saveProcessadorState(stoi(argv[1]), stoi(argv[2]), argv[3]);
+
+            auto zona = habitacao->getZona(stoi(argv[1]));
+            auto processador = (Processador *) zona->getComponente(stoi(argv[2]));
+
+            *winInfo << "\nProcessador salvo com sucesso!\n"
+                    << zona->toString()
+                    << processador->toString()
+                    << "\n";
+
 
             return true;
         } else {
             *winInfo << "\nComando 'psalva' invalido - psalva <ID zona> <ID proc. regras> <name>\n";
         }
-        //TODO: verificar se funciona
     } else if (argv[0] == "prepoe") {
         if (argv.size() == 2 && !isNumber(argv[1])) {
             *winInfo << "Comando 'prepoe' " << argv[1] << "\n";
+
+            if (!loadProcessadorState(argv[1])) {
+                *winInfo << "\nProcessador nao encontrado!\n";
+            }
+
+            loadProcessadorState(argv[3]);
+
             return true;
         } else {
             *winInfo << "\nComando 'prepoe' invalido: Nao tem argumentos\n";
         }
-        //TODO: verificar se funciona
     } else if (argv[0] == "prem") {
         if (argv.size() == 2 && !isNumber(argv[1])) {
             *winInfo << "\nComando 'prem' com argumento " << argv[1] << "\n";
+
+            deleteProcessadorState(argv[1]);
+
             return true;
         } else {
             *winInfo << "\nComando 'prem' invalido - prem <name>\n";
         }
-        //TODO: verificar se funciona
     } else if (argv[0] == "plista") {
         if (argv.size() == 1) {
             *winInfo << "\nComando 'plista'\n";
+
+            for (const auto &processador: getProcessadoresStates())
+                *winInfo << "Nome: " << processador.first
+                        << "Id Processador: " << processador.second.second->getNumId()
+                        << "Id Zona: " << processador.second.first
+                        << '\n';
+
             return true;
         } else {
             *winInfo << "\nComando 'plista' invalido - plista\n";
         }
 
         // Comandos para o simulador
-        //TODO: verificar se funciona
     } else if (argv[0] == "exec") {
         if (argv.size() == 2 && !isNumber(argv[1])) {
             *winInfo << "\nComando 'exec' com argumento " << argv[1] << "\n";
@@ -784,7 +876,6 @@ bool Simulador::validateCommand(::istringstream &comando) {
         } else {
             *winInfo << "\nComando 'exec' invalido - exec <name de ficheiro>\n";
         }
-        //TODO: verificar se funciona
     } else if (argv[0] == "sair") {
         if (argv.size() == 1) {
             *winInfo << "\nComando 'sair'\n";
@@ -866,4 +957,34 @@ Simulador::~Simulador() {
     delete winInfo;
     delete winConsole;
     delete winView;
+}
+
+void Simulador::saveProcessadorState(int idZona, int idProcessador, const string &name) {
+    processadorStatesList[name] = pair<int, Processador*>(idZona, (Processador*) habitacao->getZona(idZona)->getComponente(idProcessador));
+}
+
+bool Simulador::loadProcessadorState(const string &name) {
+    auto it = processadorStatesList.find(name);
+    if (it == processadorStatesList.end()) return false;
+
+    auto zona = habitacao->getZona(it->second.first);
+    if (!zona) return false;
+
+    auto processador = (Processador*) zona->getComponente(it->second.second->getNumId());
+    if (!processador) return false;
+
+    *processador = *it->second.second;
+}
+
+void Simulador::deleteProcessadorState(const string &name) {
+    processadorStatesList.erase(name);
+}
+
+vector<pair<string, pair<int, Processador *>>> Simulador::getProcessadoresStates() {
+    vector<pair<string, pair<int, Processador *>>> processadores;
+
+    for (const auto &processador: processadorStatesList)
+        processadores.push_back(pair<string, pair<int, Processador *>>(processador.first, processador.second));
+
+    return processadores;
 }

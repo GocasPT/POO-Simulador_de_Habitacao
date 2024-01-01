@@ -15,8 +15,6 @@ enum class TipoComponente {
     REGRA
 };
 
-//TODO [Meta 2]: Virutalizar a class (hirearquia)
-//TODO: Mudar string id para int id
 class Componente {
 protected:
     const char letterID; // Letra que identifica o componente
@@ -29,7 +27,7 @@ public:
     int getNumId() const; // Getter do número do id
     char getLetterID() const; // Getter da letra do id
 
-    string toString() const; //TODO: virtualizar
+    virtual string toString() const;
 };
 
 #endif //COMPONENTES_H

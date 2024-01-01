@@ -8,7 +8,7 @@ Aquecedor::Aquecedor(int id, Zona &zona) : Aparelho(id, 'a', "aquecedor") {
 }
 
 // TODO: funções virtuais + tempo
-
+//TODO: fix
 void Aquecedor::ligar() {
     toggleState();
     instantCount++;

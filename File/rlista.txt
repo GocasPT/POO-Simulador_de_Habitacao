@@ -1,0 +1,4 @@
+exec rnova.txt
+rnova 0 0 menor_que 1 50
+rnova 0 0 entre 1 25 25
+rlista 0 0

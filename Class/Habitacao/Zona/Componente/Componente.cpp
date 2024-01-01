@@ -17,6 +17,7 @@ int Componente::getNumId() const { return id; }
 
 char Componente::getLetterID() const { return letterID; }
 
+//TODO: toString
 string Componente::toString() const {
     ostringstream oss;
 

@@ -81,7 +81,6 @@ bool Zona::removeComponente(char tipoComponente, const int id) {
     if (it != componentes.end()) {
         Componente* obj = it->second;
         if (obj->getLetterID() == tipoComponente) {
-            //TODO: verificar as ligações
             componentes.erase(it);
             return true;
         }
@@ -97,6 +96,11 @@ bool Zona::setPropriedade(const string &key, int value) {
         return true;
     } else
         return false;
+}
+
+//TODO: toString
+string Zona::toString() const {
+    return std::string();
 }
 
 Zona::~Zona() {

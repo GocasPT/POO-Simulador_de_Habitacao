@@ -19,3 +19,8 @@ void Propriedade::setValor(int value) {
     else
         this->value = value;
 }
+
+//TODO: toString
+string Propriedade::toString() const {
+    return std::string();
+}

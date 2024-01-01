@@ -24,3 +24,8 @@ void Aparelho::toggleState() {
 void Aparelho::update() {
 
 }
+
+//TODO: toString
+string Aparelho::toString() const {
+    return Componente::toString();
+}

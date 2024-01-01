@@ -13,7 +13,6 @@
 
 using std::string;
 
-//TODO [Meta 2]: Virutalizar a class (hirearquia)
 class Propriedade {
 protected:
     string name;
@@ -26,10 +25,11 @@ public:
     Propriedade(const string &name, const string &unit, int minValue, bool isPercentage);
 
     string getName() const;
-
     int getValue() const;
 
     void setValor(int value);
+
+    virtual string toString() const;
 };
 
 

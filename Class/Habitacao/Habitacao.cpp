@@ -17,7 +17,7 @@ int Habitacao::getWide() const { return wide; }
 
 int Habitacao::getHeight() const { return height; }
 
-Zona ***Habitacao::getListaZonas() const { return listaZonas; }
+Zona ***Habitacao::getZonas() const { return listaZonas; }
 
 Zona *Habitacao::getZona(int x, int y) const {
     if (x < 0 || x >= wide || y < 0 || y >= height)

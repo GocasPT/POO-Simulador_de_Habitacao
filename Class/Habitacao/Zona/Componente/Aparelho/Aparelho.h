@@ -25,7 +25,9 @@ public:
 
     void readCommand(const string &command); // Lê um comando
     void toggleState(); // Altera o estado do aparelho
-    void update(); // Atualiza as propriedades da zona
+    virtual void update(); // Atualiza as propriedades da zona
+
+    virtual string toString() const; // Retorna uma string com a informacao do aparelho
 };
 
 #endif //APARELHO_H

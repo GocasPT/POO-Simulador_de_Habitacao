@@ -1,0 +1,5 @@
+hnova 2 2
+znova 1 1
+cnova 0 p ligar
+psalva 0 0 Teste_1
+plista

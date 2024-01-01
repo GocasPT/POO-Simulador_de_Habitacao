@@ -22,6 +22,8 @@ public:
     void sendCommand(); // Envia um comando para os aparelhos
 
     ~Processador();
+
+    void setComando(const string &command);
 };
 
 #endif //PROCESSADOR_H

@@ -29,6 +29,8 @@ public:
 
     void readSensor(); // Lê o sensor
     bool validate(); // Valida a regra
+
+    string toString() const;
 };
 
 #endif //REGRA_H

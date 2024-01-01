@@ -1,7 +1,8 @@
 #include <map>
+#include <sstream>
 #include "Regra.h"
 
-using std::map, std::cout;
+using std::map, std::ostringstream, std::cout;
 
 Regra::Regra(int id, Operacao operacao, Sensor *sensor, int x, int y) : Componente('r', id), sensor(*sensor), operacao(operacao), x(x), y(y){};
 
@@ -49,6 +50,36 @@ bool Regra::validate() {
             std::cerr << "Operacao invalida." << std::endl;
             return false;
     }
+}
+
+string Regra::toString() const {
+    ostringstream oss;
+
+    string nome;
+    switch (operacao) {
+        case Operacao::IGUAL_A:
+            nome = "igual_a";
+            break;
+        case Operacao::MENOR_QUE:
+            nome = "menor_que";
+            break;
+        case Operacao::MAIOR_QUE:
+            nome = "maior_que";
+            break;
+        case Operacao::ENTRE:
+            nome = "entre";
+            break;
+        case Operacao::FORA:
+            nome = "fora";
+            break;
+    }
+
+    oss << "Nome: " << nome
+        << " Id: " << id
+        << " Id Sensor: " << sensor.getId()
+        << '\n';
+
+    return oss.str();
 }
 
 

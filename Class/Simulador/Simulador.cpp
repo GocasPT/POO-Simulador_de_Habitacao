@@ -560,10 +560,10 @@ bool Simulador::validateCommand(::istringstream &comando) {
         // Comandos para os processadores
         //TODO: verificar se funciona
     } else if (argv[0] == "rnova") {
-        if (argv.size() >= 6 && argv.size() <= 7 && isNumber(argv[1]) && isNumber(argv[2]) && isNumber(argv[3]) && isNumber(argv[4]) &&
+        if (argv.size() >= 6 && argv.size() <= 7 && isNumber(argv[1]) && isNumber(argv[2]) && !isNumber(argv[3]) && isNumber(argv[4]) &&
             isNumber(argv[5])) {
             *winInfo << "\nComando 'rnova' com argumentos [" << argv[1] << " " << argv[2] << " " << argv[3] << " "
-                     << argv[4] << "\n";
+                     << argv[4] << " " << argv[5] << "\n";
 
             if (!checkHabitacao()) return true;
 
@@ -589,14 +589,18 @@ bool Simulador::validateCommand(::istringstream &comando) {
             int id = idCount;
 
             if (argv.size() == 6)
-                regra = new Regra(id++, Regra::stringToOperacao(argv[3]), sensor, stoi(argv[6]));
+                regra = new Regra(id++, Regra::stringToOperacao(argv[3]), sensor, stoi(argv[5]));
             else if (argv.size() == 7)
-                regra = new Regra(id++, Regra::stringToOperacao(argv[3]), sensor,  stoi(argv[6]), stoi(argv[7]));
+                regra = new Regra(id++, Regra::stringToOperacao(argv[3]), sensor, stoi(argv[5]), stoi(argv[6]));
+
 
             if (!regra) {
                 *winInfo << "\nErro na criacao da regra!\n";
                 return true;
             }
+
+            *winInfo << "\nRegra criada com sucesso!\n";
+            *winInfo << regra->toString() << "\n";
 
             processador->addRegra(*regra);
 
@@ -617,6 +621,15 @@ bool Simulador::validateCommand(::istringstream &comando) {
                 *winInfo << "\nZona nao encontrada!\n";
                 return true;
             }
+
+            auto processador = (Processador *) zona->getComponente(stoi(argv[2]));
+            if (!processador) {
+                *winInfo << "\nProcessador nao encontrado!\n";
+                return true;
+            }
+
+            processador->setComando(argv[3]);
+            *winInfo << "\nComando alterado com sucesso!\n"; //TODO: descrever mais merdas
 
             return true;
         } else {

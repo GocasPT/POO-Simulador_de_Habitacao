@@ -17,7 +17,7 @@ class Simulador {
 
     bool inSimulation;  // Flag que indica se o simulador esta a correr
     Habitacao *habitacao; // Ponteiro para a habitacao
-    static int idCount;
+    int idCount;
 
     void init();    // Inicializa o simulador
     void start();   // Inicia o simulador

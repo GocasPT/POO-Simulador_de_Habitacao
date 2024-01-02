@@ -24,23 +24,31 @@ void Aparelho::readCommand(const string &command) {
 
 void Aparelho::ligar() {
     state = true;
-    letter = toupper(letter);
+    letter = (char) toupper(letter);
     instantCount = 0;
 }
 
 void Aparelho::desligar() {
     state = false;
-    letter = tolower(letter);
+    letter = (char) tolower(letter);
     instantCount = 0;
 }
 
 string Aparelho::toString() const {
     ostringstream oss;
 
-    oss << "Aparelho: " << name
-        << "Id:" << getId()
-        << "Estado: " << state
+    oss << "Aparelho: " << name << " "
+        << "Id:" << getId() << " "
+        << "Estado: " << ( state ? "Ligado" : "Desligado" )
         << '\n';
+
+    return oss.str();
+}
+
+string Aparelho::getId() const {
+    ostringstream oss;
+
+    oss << getLetterID() << letter << getNumId();
 
     return oss.str();
 }

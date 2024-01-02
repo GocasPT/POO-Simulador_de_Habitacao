@@ -69,7 +69,7 @@ void Processador::update() { validateRegras(); }
 string Processador::toString() const {
     ostringstream oss;
 
-    oss << "Processador " << id << " - '" << comando << "'\n";
+    oss << "Processador " << getId() << " - '" << comando << "'\n";
     for(const auto regra: regras)
         oss << regra->toString() << "\n";
 

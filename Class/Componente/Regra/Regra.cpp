@@ -68,9 +68,9 @@ string Regra::toString() const {
             break;
     }
 
-    oss << "Regra de '" << nome <<'\''
-        << " Id: " << id
-        << " Id Sensor: " << sensor.getId()
+    oss << "Regra de '" << nome << "' "
+        << "Id: " << getId() << " "
+        << "Id Sensor: " << sensor.getId()
         << '\n';
 
     return oss.str();

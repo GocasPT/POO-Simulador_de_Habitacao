@@ -22,7 +22,7 @@ protected:
 public:
     Componente(char c, int id);
 
-    string getId() const; // Getter do id
+    virtual string getId() const; // Getter do id
     int getNumId() const; // Getter do número do id
     char getLetterID() const; // Getter da letra do id
 

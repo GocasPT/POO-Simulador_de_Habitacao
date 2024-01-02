@@ -16,7 +16,7 @@ int Sensor::getPropriedadeValue() const { return this->propriedade.getValue(); }
 string Sensor::toString() const {
     ostringstream oss;
 
-    oss << "Sensor de " << this->name << " (" << this->letter << ")";
+    oss << "Sensor de " << this->name << " (" << this->letter << ") - " << getId() << "\n";
 
     return oss.str();
 }

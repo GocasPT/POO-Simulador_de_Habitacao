@@ -18,6 +18,7 @@ protected:
 public:
     Aparelho(int id, char letter, string name);
 
+    string getId() const override;
     string getName() const; // Getter do nome
     char getLetter() const; // Getter da letra
     bool getState() const; // Getter do estado

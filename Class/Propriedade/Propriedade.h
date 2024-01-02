@@ -23,8 +23,8 @@ protected:
     const bool isPercentage;
 
 public:
-    Propriedade(const string &name, const string &unit, bool isPercentage = true, double minValue = 0.0, double maxValue = 0.0,
-                bool haveMin = false, bool haveMax = false);
+    Propriedade(const string &name, const string &unit, double valueDefault, bool isPercentage = true,
+                double minValue = 0.0, double maxValue = 0.0, bool haveMin = false, bool haveMax = false);
 
     string getName() const;
 

@@ -1,3 +1,3 @@
 #include "Temperatura.h"
 
-Temperatura::Temperatura() : Propriedade(TEMPERATURA_STR, "Graus celsius", false, -273, 0, true, false) {}
+Temperatura::Temperatura() : Propriedade(TEMPERATURA_STR, "Graus celsius", 20, false, -273, 0, true, false) {}

@@ -3,11 +3,12 @@
 
 using std::ostringstream;
 
-Propriedade::Propriedade(const string &name, const string &unit, bool isPercentage, double minValue, double maxValue,
-                         bool haveMin,
-                         bool haveMax) : name(name), unit(unit), minValue(minValue), maxValue(maxValue), haveMin(haveMin),
+Propriedade::Propriedade(const string &name, const string &unit, double valueDefault, bool isPercentage,
+                         double minValue,
+                         double maxValue, bool haveMin, bool haveMax)
+        : name(name), unit(unit), minValue(minValue), maxValue(maxValue), haveMin(haveMin),
                                          haveMax(haveMax), isPercentage(isPercentage) {
-    value = 0;
+    value = valueDefault;
 }
 
 string Propriedade::getName() const { return name; }

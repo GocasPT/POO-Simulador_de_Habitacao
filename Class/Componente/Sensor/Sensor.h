@@ -19,6 +19,8 @@ public:
     char getLetter() const; // Getter da letra
 
     int getPropriedadeValue() const; // Getter do valor da propriedade
+
+    string toString() const override; // Retorna uma string com a informacao do sensor
 };
 
 #endif //SENSOR_H

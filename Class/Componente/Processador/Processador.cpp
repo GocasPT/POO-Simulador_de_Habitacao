@@ -1,16 +1,17 @@
 #include <algorithm>
+#include <sstream>
 #include "Processador.h"
 
-using std::remove_if;
+using std::remove_if, std::ostringstream;
 
 Processador::Processador(int id, string comando) : Componente('p', id) {
     this->comando = comando;
 }
 
-//TODO: clone
-/*Processador &Processador::clone() const {
-    return <#initializer#>;
-}*/
+Processador Processador::clone() const {
+    Processador clone(id, comando);
+    return clone;
+};
 
 Processador &Processador::operator=(const Processador &processador) {
     if (this != &processador) {
@@ -51,18 +52,31 @@ void Processador::removeAparelho(const int id) {
 void Processador::setComando(const string &command) { this->comando = command; }
 
 bool Processador::validateRegras() {
+    for(const auto regra: regras)
+        if(!regra->validate()) return false;
+
+    sendCommand();
     return true;
 }
 
 void Processador::sendCommand() {
+    for(const auto aparelho: aparelhos)
+        aparelho->readCommand(comando);
+}
 
+void Processador::update() { validateRegras(); }
+
+string Processador::toString() const {
+    ostringstream oss;
+
+    oss << "Processador " << id << " - '" << comando << "'\n";
+    for(const auto regra: regras)
+        oss << regra->toString() << "\n";
+
+    return oss.str();
 }
 
 Processador::~Processador() {
-
-}
-
-//TODO: update
-void Processador::update() {
-
+    for(const auto regra: regras)
+        delete regra;
 }

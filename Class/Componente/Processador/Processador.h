@@ -15,7 +15,7 @@ class Processador : public Componente {
 public:
     Processador(int id, string comando);
 
-    Processador &clone() const;
+    Processador clone() const;
 
     Processador &operator=(const Processador &processador);
 
@@ -31,6 +31,8 @@ public:
     bool validateRegras(); // Valida as regras
     void sendCommand(); // Envia um comando para os aparelhos
     void update(); // Atualiza os aparelhos
+
+    string toString() const override;
 
     ~Processador();
 };

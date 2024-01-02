@@ -7,7 +7,7 @@ Propriedade::Propriedade(const string &name, const string &unit, bool isPercenta
                          bool haveMin,
                          bool haveMax) : name(name), unit(unit), minValue(minValue), maxValue(maxValue), haveMin(haveMin),
                                          haveMax(haveMax), isPercentage(isPercentage) {
-    value = 0; //TODO: radnom number
+    value = 0;
 }
 
 string Propriedade::getName() const { return name; }
@@ -26,7 +26,6 @@ void Propriedade::setValor(double value) {
     }
 }
 
-//TODO: toString
 string Propriedade::toString() const {
     ostringstream oss;
 

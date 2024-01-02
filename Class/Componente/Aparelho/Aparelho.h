@@ -22,11 +22,12 @@ public:
     char getLetter() const; // Getter da letra
     bool getState() const; // Getter do estado
 
-    virtual void readCommand(const string &command)=0; // Lê um comando
-    void toggleState(); // Altera o estado do aparelho
+    virtual void readCommand(const string &command); // Lê um comando
+    void ligar();
+    void desligar();
     virtual void update()=0; // Atualiza as propriedades da zona
 
-    virtual string toString() const override; // Retorna uma string com a informacao do aparelho
+    string toString() const override; // Retorna uma string com a informacao do aparelho
 };
 
 #endif //APARELHO_H

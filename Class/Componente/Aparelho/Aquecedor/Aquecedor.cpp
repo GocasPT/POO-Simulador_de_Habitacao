@@ -4,6 +4,7 @@
 using std::cout, std::endl, std::ostringstream;
 
 Aquecedor::Aquecedor(int id, Zona &zona) : Aparelho(id, 'a', "aquecedor") {
+
     propriedades[TEMPERATURA_STR] = zona.getPropriedade(TEMPERATURA_STR);
     propriedades[SOM_STR] = zona.getPropriedade(SOM_STR);
 }

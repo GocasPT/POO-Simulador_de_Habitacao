@@ -42,6 +42,8 @@ bool Regra::validate() {
         case Operacao::FORA:
             return (valorLido < x || valorLido > y);
     }
+
+    return false;
 }
 
 string Regra::toString() const {
@@ -50,13 +52,13 @@ string Regra::toString() const {
     string nome;
     switch (operacao) {
         case Operacao::IGUAL_A:
-            nome = "igual_a";
+            nome = "igual a";
             break;
         case Operacao::MENOR_QUE:
-            nome = "menor_que";
+            nome = "menor que";
             break;
         case Operacao::MAIOR_QUE:
-            nome = "maior_que";
+            nome = "maior que";
             break;
         case Operacao::ENTRE:
             nome = "entre";
@@ -66,7 +68,7 @@ string Regra::toString() const {
             break;
     }
 
-    oss << "Nome: " << nome
+    oss << "Regra de '" << nome <<'\''
         << " Id: " << id
         << " Id Sensor: " << sensor.getId()
         << '\n';

@@ -2,6 +2,7 @@
 
 #include <utility>
 #include <sstream>
+#include <cctype>
 
 using std::map, std::ostringstream;
 
@@ -14,12 +15,22 @@ char Aparelho::getLetter() const { return letter; }
 
 bool Aparelho::getState() const { return state; }
 
-void Aparelho::toggleState() {
-    state = !state;
-    if (state)
-        letter = toupper(letter);
-    else
-        letter = tolower(letter);
+void Aparelho::readCommand(const string &command) {
+    if (command == "ligar" && !state)
+        ligar();
+    else if (command == "desligar" && state)
+        desligar();
+}
+
+void Aparelho::ligar() {
+    state = true;
+    letter = toupper(letter);
+    instantCount = 0;
+}
+
+void Aparelho::desligar() {
+    state = false;
+    letter = tolower(letter);
     instantCount = 0;
 }
 

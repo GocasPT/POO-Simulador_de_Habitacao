@@ -29,7 +29,7 @@ public:
 
     bool validate(); // Valida a regra
 
-    string toString() const;
+    string toString() const override;
 };
 
 #endif //REGRA_H

@@ -116,8 +116,9 @@ void Simulador::next() {
 
     for (int i = 0; i < habitacao->getHeight(); i++)
         for (int j = 0; j < habitacao->getWide(); j++) {
-            Zona &zona = *habitacao->getZona(i, j);
-            zona.update();
+            auto zona = habitacao->getZona(i, j);
+            if (zona)
+                zona->update();
         }
 }
 
@@ -312,6 +313,7 @@ bool Simulador::validateCommand(istringstream &comando) {
             if (!checkHabitacao()) return true;
 
             next();
+
             return true;
         } else {
             *winInfo << "\nComando 'prox' invalido - prox\n";
@@ -324,6 +326,7 @@ bool Simulador::validateCommand(istringstream &comando) {
 
             for (int i = 0; i < stoi(argv[1]); i++)
                 next();
+
             return true;
         } else {
             *winInfo << "\nComando 'avanca' invalido - avanca <n>\n";
@@ -465,8 +468,9 @@ bool Simulador::validateCommand(istringstream &comando) {
                         break;
                 }
 
-                *winInfo << "\nComponente: " << componente->getId() << "'\n";
-                *winInfo << "Tipo: " << typeText << "\n";
+                *winInfo << "\nComponente: " << componente->getId() << "'\n"
+                        << componente->toString()
+                        << "\n";
             }
 
             return true;
